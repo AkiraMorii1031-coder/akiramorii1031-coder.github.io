@@ -1,0 +1,3003 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="在 B2B 國際手工具品牌做了 15 年的網頁設計師。主要工作是品牌官網視覺設計、Landing Page 行銷頁面與 HTML5/CSS3 RWD 響應式切版，同時有型錄排版、展場視覺、Chrome 擴充功能開發和 AI 影音實作經驗。">
+    <meta name="keywords" content="網頁設計師, 網頁UI, 品牌視覺, RWD切版, 行銷頁面, Chrome擴充功能, 型錄排版, 展場設計">
+    <meta name="author" content="Morii">
+    <title>Cinematic Spatial Showcase | 資深品牌網頁設計師 (Morii)</title>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Syne:wght@800&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Chart.js for Skills Radar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        galleryBlack: '#050608', // 藝廊曜石極黑
+                        exhibitGray: '#12141C',  // 展板深灰
+                        accentGold: '#D4AF37',   // 特裝陽極氧化金
+                        neonAmber: '#FF9F00',    // 安全指示琥珀黃
+                        techSilver: '#E2E8F0'    // 鋼鐵灰白
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050608;
+            color: #E2E8F0;
+        }
+
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-syne-hero {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+        }
+
+        /* 英文大標題挺拔比例 (高寬比拉伸至約 0.9 : 1) */
+        .hero-title-en,
+        .syne-tall {
+            display: inline-block;
+            transform: scaleY(1.18);
+            transform-origin: center bottom;
+            vertical-align: baseline;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
+            margin-bottom: 0.1em;
+        }
+
+        .font-orbitron-acc {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* 藝廊大格線系統 */
+        .gallery-grid {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* 呼吸光暈與微交互 */
+        .pulse-hotspot {
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(255, 159, 0, 0.6);
+            }
+
+            70% {
+                transform: scale(1.3);
+                opacity: 0.3;
+                box-shadow: 0 0 0 8px rgba(255, 159, 0, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(255, 159, 0, 0);
+            }
+        }
+
+        /* 印刷出血裁切對位線 */
+        .crop-mark {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .crop-mark-tl {
+            top: -1px;
+            left: -1px;
+            border-bottom: 1px solid #D4AF37;
+            border-right: 1px solid #D4AF37;
+        }
+
+        .crop-mark-tr {
+            top: -1px;
+            right: -1px;
+            border-bottom: 1px solid #D4AF37;
+            border-left: 1px solid #D4AF37;
+        }
+
+        .crop-mark-bl {
+            bottom: -1px;
+            left: -1px;
+            border-top: 1px solid #D4AF37;
+            border-right: 1px solid #D4AF37;
+        }
+
+        .crop-mark-br {
+            bottom: -1px;
+            right: -1px;
+            border-top: 1px solid #D4AF37;
+            border-left: 1px solid #D4AF37;
+        }
+
+        /* 暗色 Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(5, 6, 8, 0.98);
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-show {
+            display: block;
+        }
+
+        /* 燈箱版型自適應 */
+        /* 1. 寬比高大 (Landscape)：上下排版（圖片在上面，作品描述在下面） */
+        .lightbox.is-landscape #lightbox-container {
+            max-width: 1024px !important; /* 寬圖視野完整開展 (1024px) */
+        }
+        .lightbox.is-landscape #lightbox-card {
+            flex-direction: column !important;
+        }
+        .lightbox.is-landscape #lightbox-media-wrapper {
+            width: 100% !important;
+        }
+        .lightbox.is-landscape #lightbox-media-wrapper img,
+        .lightbox.is-landscape #lightbox-media-wrapper video {
+            max-height: 70vh !important;
+        }
+        .lightbox.is-landscape #lightbox-info-wrapper {
+            width: 100% !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding-top: 1.25rem !important;
+        }
+
+        /* 2. 高比寬大 (Portrait)：維持原本排版（左右排版，左側圖片，右側描述） */
+        .lightbox.is-portrait #lightbox-container {
+            max-width: 1024px !important; /* (1024px) */
+        }
+        @media (min-width: 768px) {
+            .lightbox.is-portrait #lightbox-card {
+                flex-direction: row !important;
+            }
+            .lightbox.is-portrait #lightbox-media-wrapper {
+                width: 65% !important;
+            }
+            .lightbox.is-portrait #lightbox-media-wrapper img,
+            .lightbox.is-portrait #lightbox-media-wrapper video {
+                max-height: 75vh !important;
+            }
+            .lightbox.is-portrait #lightbox-info-wrapper {
+                width: 35% !important;
+                border-top: none !important;
+                padding-top: 0 !important;
+            }
+        }
+
+        /* 藝廊風 Tag 樣式 */
+        .tag-gallery {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2px 8px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background-color: rgba(212, 175, 55, 0.03);
+            color: rgba(226, 232, 240, 0.9);
+            transition: all 0.25s ease;
+        }
+
+        .tag-gallery:hover {
+            border-color: #FF9F00;
+            color: #FF9F00;
+            background-color: rgba(255, 159, 0, 0.05);
+            box-shadow: 0 0 8px rgba(255, 159, 0, 0.15);
+        }
+
+        /* 滾動淡入 active 狀態 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 作品卡片滾動淡入 */
+        .card-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .card-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 行動版選單 */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .mobile-menu.open {
+            max-height: 400px;
+        }
+
+        /* 回到頂部按鈕 */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 90;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: rgba(5, 6, 8, 0.9);
+            backdrop-filter: blur(6px);
+            color: #D4AF37;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, background 0.2s ease;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            background: #D4AF37;
+            color: #050608;
+        }
+
+        /* 列印樣式 */
+        @media print {
+            body {
+                background: #fff !important;
+                color: #111 !important;
+            }
+
+            .gallery-grid {
+                background-image: none !important;
+            }
+
+            header,
+            footer,
+            .back-to-top,
+            .lightbox,
+            .crop-mark,
+            .pulse-hotspot,
+            .filter-btn,
+            [onclick],
+            button,
+            .mobile-menu {
+                display: none !important;
+            }
+
+            section {
+                border-color: #ccc !important;
+                page-break-inside: avoid;
+            }
+
+            h1,
+            h2,
+            h3,
+            span,
+            p,
+            li {
+                color: #111 !important;
+            }
+
+            .tag-gallery {
+                border-color: #999 !important;
+                color: #333 !important;
+                background: transparent !important;
+            }
+
+            .bg-exhibitGray\/20,
+            .bg-exhibitGray\/30,
+            .bg-exhibitGray\/40,
+            .bg-galleryBlack,
+            .bg-galleryBlack\/90 {
+                background: transparent !important;
+            }
+
+            .border-white\/5,
+            .border-white\/10 {
+                border-color: #ddd !important;
+            }
+
+            img {
+                max-height: 200px;
+                object-fit: contain;
+            }
+        }
+    </style>
+</head>
+
+<body class="relative min-h-screen overflow-x-hidden gallery-grid selection:bg-accentGold selection:text-galleryBlack">
+
+    <!-- 頂端奢華漸層條 -->
+    <div class="w-full h-[3px] bg-gradient-to-r from-accentGold via-neonAmber to-exhibitGray"></div>
+
+    <!-- 頁首 Header -->
+    <header
+        class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center border-b border-white/5 bg-galleryBlack/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex flex-col">
+            <span
+                class="font-orbitron-acc text-lg tracking-widest text-techSilver font-black">SPATIAL.STUDIO_v3.0</span>
+            <span class="font-mono-tech text-[9px] tracking-widest text-accentGold/80">LATITUDE 24.14° N //
+                SYSTEM_ACTIVE</span>
+        </div>
+        <nav class="hidden md:flex space-x-8 font-mono-tech text-xs tracking-wider text-techSilver/60">
+            <a href="#about" class="hover:text-accentGold transition-colors">// PROFILE_LOG</a>
+            <a href="#skills" class="hover:text-accentGold transition-colors">// TECH_DIAGRAM</a>
+            <a href="#experience" class="hover:text-accentGold transition-colors">// WORK_TIMELINE</a>
+            <a href="#work" class="hover:text-accentGold transition-colors">// THE_ARCHIVE</a>
+            <a href="#contact" class="hover:text-accentGold transition-colors">// INITIATE_CALL</a>
+        </nav>
+        <div class="flex items-center gap-4">
+            <a href="#pdf"
+                class="hidden sm:inline-block border border-accentGold/40 px-5 py-2 text-xs font-mono-tech font-bold text-accentGold hover:bg-accentGold hover:text-galleryBlack transition-all duration-300">
+                DOWNLOAD_PORTFOLIO_PDF
+            </a>
+            <!-- 漢堡選單按鈕 -->
+            <button id="hamburger-btn" class="md:hidden flex flex-col gap-[5px] p-2 group" aria-label="開啟選單">
+                <span class="block w-5 h-[2px] bg-accentGold transition-all group-hover:bg-neonAmber"></span>
+                <span class="block w-5 h-[2px] bg-accentGold transition-all group-hover:bg-neonAmber"></span>
+                <span class="block w-5 h-[2px] bg-accentGold transition-all group-hover:bg-neonAmber"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 行動版下拉選單 -->
+    <div id="mobile-menu"
+        class="mobile-menu md:hidden bg-exhibitGray/95 backdrop-blur-md border-b border-white/5 sticky top-[73px] z-40">
+        <nav
+            class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-3 font-mono-tech text-xs tracking-wider text-techSilver/70">
+            <a href="#about" class="mobile-nav-link hover:text-accentGold transition-colors py-1">// PROFILE_LOG</a>
+            <a href="#skills" class="mobile-nav-link hover:text-accentGold transition-colors py-1">// TECH_DIAGRAM</a>
+            <a href="#experience" class="mobile-nav-link hover:text-accentGold transition-colors py-1">//
+                WORK_TIMELINE</a>
+            <a href="#work" class="mobile-nav-link hover:text-accentGold transition-colors py-1">// THE_ARCHIVE</a>
+            <a href="#contact" class="mobile-nav-link hover:text-accentGold transition-colors py-1">// INITIATE_CALL</a>
+            <a href="#pdf" class="text-accentGold font-bold py-1">DOWNLOAD_PORTFOLIO_PDF ↓</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section (陽極氧化金藝廊居中儀表板) -->
+    <section id="home"
+        class="max-w-7xl mx-auto px-6 py-16 md:py-28 flex flex-col items-center justify-center text-center border-b border-white/5 relative overflow-hidden">
+
+        <!-- 十字對位標記 -->
+        <div class="absolute top-4 left-4 w-8 h-8 opacity-20">
+            <div class="w-full h-[1px] bg-accentGold absolute top-1/2 left-0"></div>
+            <div class="h-full w-[1px] bg-accentGold absolute left-1/2 top-0"></div>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 opacity-20">
+            <div class="w-full h-[1px] bg-accentGold absolute top-1/2 left-0"></div>
+            <div class="h-full w-[1px] bg-accentGold absolute left-1/2 top-0"></div>
+        </div>
+
+        <div class="flex flex-col items-center space-y-6 z-10 max-w-4xl">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 text-accentGold font-mono-tech text-[10px] tracking-widest uppercase rounded">
+                <span class="w-1.5 h-1.5 rounded-full bg-neonAmber animate-ping"></span>
+                SENIOR WEB DESIGNER & BRAND VISUAL (15 YEARS)
+            </div>
+
+            <h1 class="font-syne-hero text-4xl sm:text-6xl font-black tracking-tight text-techSilver leading-tight">
+                <span class="hero-title-en">CODE, DESIGN & AI EVOLUTION.</span><br>
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-accentGold via-amber-400 to-white">從網頁設計到
+                    AI 工作流的<br>進化實踐</span>
+            </h1>
+
+            <p
+                class="text-xs md:text-sm text-techSilver/70 max-w-2xl leading-relaxed mx-auto text-justify md:text-center font-sans">
+                我現職是網頁設計師，在 B2B 國際手工具品牌穩定工作了 15 年。核心工作是品牌官網的視覺設計、一頁式產品行銷網頁，以及 HTML5/CSS3
+                響應式版面。因為公司設計部門規模不大，網頁設計之外我也承擔了相當量的平面工作，包括型錄排版、雜誌廣告設計和展場視覺統籌。這讓我對大多數設計媒材有直接的實戰理解，不只限於網頁本身。
+            </p>
+
+            <!-- 數據統計區 (藝廊曜石金面板) -->
+            <div
+                class="grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-white/5 pt-8 w-full max-w-3xl font-mono-tech text-xs mt-4">
+                <div class="flex flex-col items-center border border-white/5 p-3 bg-exhibitGray/40 rounded">
+                    <span class="text-[9px] text-techSilver/40">// BRAND_YEARS</span>
+                    <span class="text-2xl font-orbitron-acc font-black text-accentGold flex items-center mt-1">
+                        <span class="stat-number" data-target="15">0</span><span>YRS</span>
+                    </span>
+                    <span class="text-[10px] text-techSilver/60 mt-1">年品牌實戰</span>
+                </div>
+                <div class="flex flex-col items-center border border-white/5 p-3 bg-exhibitGray/40 rounded">
+                    <span class="text-[9px] text-techSilver/40">// DOMAIN_FIELDS</span>
+                    <span class="text-2xl font-orbitron-acc font-black text-techSilver mt-1">
+                        <span class="stat-number" data-target="5">0</span><span>NODE</span>
+                    </span>
+                    <span class="text-[10px] text-techSilver/60 mt-1">核心專業領域</span>
+                </div>
+                <div class="flex flex-col items-center border border-white/5 p-3 bg-exhibitGray/40 rounded">
+                    <span class="text-[9px] text-techSilver/40">// LARGE_PRINTS</span>
+                    <span class="text-2xl font-orbitron-acc font-black text-techSilver mt-1">
+                        <span class="stat-number" data-target="57">0</span><span>PRT</span>
+                    </span>
+                    <span class="text-[10px] text-techSilver/60 mt-1">巨幅大圖輸出</span>
+                </div>
+                <div class="flex flex-col items-center border border-white/5 p-3 bg-exhibitGray/40 rounded">
+                    <span class="text-[9px] text-techSilver/40">// TOTAL_PROJECTS</span>
+                    <span class="text-2xl font-orbitron-acc font-black text-neonAmber flex items-center mt-1">
+                        <span class="stat-number" data-target="100">0</span><span>+</span>
+                    </span>
+                    <span class="text-[10px] text-techSilver/60 mt-1">平面與網頁專案</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 pt-4 justify-center">
+                <a href="#work"
+                    class="bg-accentGold text-galleryBlack px-6 py-3 font-mono-tech font-bold text-xs hover:bg-white hover:text-galleryBlack transition-all duration-300 tracking-widest">
+                    EXPLORE_THE_ARCHIVE ↓
+                </a>
+                <a href="#about"
+                    class="border border-white/20 px-6 py-3 font-mono-tech font-bold text-xs hover:bg-white/5 hover:border-accentGold transition-all duration-300 text-techSilver/80">
+                    READ_COMPILER_LOGS
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about"
+        class="max-w-7xl mx-auto px-6 py-16 border-b border-white/5 grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
+        <div class="absolute bottom-4 right-4 w-6 h-6 opacity-20">
+            <div class="w-full h-[1px] bg-accentGold absolute top-1/2 left-0"></div>
+            <div class="h-full w-[1px] bg-accentGold absolute left-1/2 top-0"></div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-6">
+            <span class="font-mono-tech text-xs text-accentGold font-bold">// COMPILER_LOG // 個人核心自述</span>
+            <h2 class="font-syne-hero text-3xl font-black text-techSilver">這幾年學了什麼，以及怎麼把它用出來</h2>
+
+            <div class="space-y-3 text-xs md:text-sm text-techSilver/80 leading-relaxed font-sans">
+                <p class="text-techSilver/90 font-medium">// 持續學習是我工作的一部分，但我更在意的是「學了能不能真的用出成果」：</p>
+                <ul class="space-y-2 pl-4 border-l border-accentGold/30">
+                    <li><strong class="text-accentGold font-mono-tech">▸ 視聽語言與影音觀念
+                            (2022)</strong>：完整修讀「視聽語言」課程，系統學習電影工業的攝影美學與剪輯觀念。</li>
+                    <li><strong class="text-accentGold font-mono-tech">▸ AI 工具與自動化開發 (2025 起)</strong>：以 Vibe Coding
+                        自行開發 3 個 Chrome 擴充功能（後台 HTML 上傳工具、官網資料核對小幫手、郵件智慧分類 Email Classifier）與產品專案進度甘特圖 Web App。</li>
+                    <li><strong class="text-accentGold font-mono-tech">▸ 實體拍攝與影片剪輯</strong>：單眼相機全手動模式獨立完成靜態產品拍攝；手機拍攝
+                        B-roll 與操作示範，透過 Premiere Pro 剪輯輸出完整介紹影片。</li>
+                    <li><strong class="text-accentGold font-mono-tech">▸ AIGC 影音與 AI 繪本量產</strong>：以傳統剪輯觀念撰寫 Gemini Veo
+                        3 的 Prompt 指令完成 90 秒動畫預告片；並搭配 Nano Banana 2 與 GPT images 2.0 製作可直接送廠印刷的故事繪本。</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-2">
+                <span class="tag-gallery">品牌官網與 3,000+ 品項管理</span>
+                <span class="tag-gallery">Landing Page 響應式切版</span>
+                <span class="tag-gallery">Chrome 擴充功能與 Web 工具開發</span>
+                <span class="tag-gallery">公司目錄型錄排版與印刷完稿</span>
+                <span class="tag-gallery">靜態攝影與 Premiere 影片剪輯</span>
+                <span class="tag-gallery">AIGC 影片生成與 AI 繪本量產</span>
+            </div>
+        </div>
+
+        <!-- 專業優勢指標 -->
+        <div class="lg:col-span-5 flex flex-col justify-center">
+            <div class="border border-white/5 p-6 bg-exhibitGray/30 rounded-lg space-y-6">
+                <h3 class="font-orbitron-acc text-sm font-bold text-accentGold border-b border-white/5 pb-2">//
+                    SYSTEM_CORE_MATRICES</h3>
+
+                <div class="space-y-4 font-mono-tech text-xs">
+                    <div>
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>WEB_UI & CODE (HTML5, RWD, Chrome Ext)</span>
+                            <span class="text-accentGold">95%</span>
+                        </div>
+                        <div class="w-full bg-exhibitGray h-1.5 rounded overflow-hidden">
+                            <div class="bg-accentGold h-full w-[95%]"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>CATALOG & CMYK (Data Grids, Layouts)</span>
+                            <span class="text-accentGold">98%</span>
+                        </div>
+                        <div class="w-full bg-exhibitGray h-1.5 rounded overflow-hidden">
+                            <div class="bg-accentGold h-full w-[98%]"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>SPATIAL & EXHIBITS (Frankfurt/Cologne)</span>
+                            <span class="text-accentGold">90%</span>
+                        </div>
+                        <div class="w-full bg-exhibitGray h-1.5 rounded overflow-hidden">
+                            <div class="bg-accentGold h-full w-[90%]"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>AI PIPELINES (SD Consistency, Veo 3)</span>
+                            <span class="text-neonAmber">92%</span>
+                        </div>
+                        <div class="w-full bg-exhibitGray h-1.5 rounded overflow-hidden">
+                            <div class="bg-neonAmber h-full w-[92%]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Radar Section (藝廊精緻雷達圖) -->
+    <section id="skills" class="max-w-7xl mx-auto px-6 py-16 border-b border-white/5 relative">
+        <div class="crop-mark crop-mark-tl"></div>
+        <div class="crop-mark crop-mark-tr"></div>
+        <div class="crop-mark crop-mark-bl"></div>
+        <div class="crop-mark crop-mark-br"></div>
+
+        <div class="text-center mb-10">
+            <span class="font-mono-tech text-xs text-accentGold font-bold">// TECH_DIAGRAM // 技術拓樸節點</span>
+            <h2 class="font-syne-hero text-3xl font-extrabold text-techSilver mt-2">核心專長結構分析</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            <!-- 雷達圖 (Chart.js) -->
+            <div class="md:col-span-7 flex justify-center">
+                <div class="w-full max-w-[480px] bg-exhibitGray/30 border border-white/5 p-4 rounded-lg">
+                    <canvas id="skillsChart" class="w-full"></canvas>
+                </div>
+            </div>
+
+            <!-- 分類標籤面板 -->
+            <div class="md:col-span-5 space-y-6">
+                <div class="skill-category-block border border-white/5 p-4 bg-exhibitGray/20 rounded">
+                    <h4 class="font-bold font-orbitron-acc text-xs text-accentGold mb-2">💻 網頁 UI 與前端</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="tag-gallery">產品 Landing Page 動線</span>
+                        <span class="tag-gallery">企業官網佈局</span>
+                        <span class="tag-gallery">HTML5/CSS3 手寫切版</span>
+                        <span class="tag-gallery">SEO 優化</span>
+                        <span class="tag-gallery">Vibe Coding 提速</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-block border border-white/5 p-4 bg-exhibitGray/20 rounded">
+                    <h4 class="font-bold font-orbitron-acc text-xs text-neonAmber mb-2">📖 型錄排版與印刷</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="tag-gallery">複雜規格分層排版</span>
+                        <span class="tag-gallery">手工具年鑑設計</span>
+                        <span class="tag-gallery">機械型錄封面設計</span>
+                        <span class="tag-gallery">三摺頁宣傳單</span>
+                        <span class="tag-gallery">Illustrator/InDesign/Photoshop</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-block border border-white/5 p-4 bg-exhibitGray/20 rounded">
+                    <h4 class="font-bold font-orbitron-acc text-xs text-accentGold mb-2">🏛️ 空間展場與大型輸出</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="tag-gallery">國際五金展設計</span>
+                        <span class="tag-gallery">工具機展攤位</span>
+                        <span class="tag-gallery">廠區大型帆布輸出</span>
+                        <span class="tag-gallery">車體廣告</span>
+                        <span class="tag-gallery">外牆海報</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-block border border-white/5 p-4 bg-exhibitGray/20 rounded">
+                    <h4 class="font-bold font-orbitron-acc text-xs text-neonAmber mb-2">🎬 攝影與 Premiere 剪輯</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="tag-gallery">單眼全手動 M 模式</span>
+                        <span class="tag-gallery">快門/光圈/ISO 調配</span>
+                        <span class="tag-gallery">手機特寫 B-roll 拍攝</span>
+                        <span class="tag-gallery">操作示範影片拍攝</span>
+                        <span class="tag-gallery">Premiere Pro 後期剪輯</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-block border border-white/5 p-4 bg-exhibitGray/20 rounded">
+                    <h4 class="font-bold font-orbitron-acc text-xs text-accentGold mb-2">🤖 AI 視覺與自動化</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="tag-gallery">Gemini Veo 3 預告片</span>
+                        <span class="tag-gallery">SD 3.5 / Nano Banana 2</span>
+                        <span class="tag-gallery">GPT images 2.0 繪本</span>
+                        <span class="tag-gallery">Chrome Extension 開發</span>
+                        <span class="tag-gallery">Gemini API / Python</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline Section (琥珀發光時間軸) -->
+    <section id="experience" class="max-w-7xl mx-auto px-6 py-16 border-b border-white/5 relative">
+        <div class="absolute top-4 left-4 w-6 h-6 opacity-20">
+            <div class="w-full h-[1px] bg-accentGold absolute top-1/2 left-0"></div>
+            <div class="h-full w-[1px] bg-accentGold absolute left-1/2 top-0"></div>
+        </div>
+
+        <div class="mb-12">
+            <span class="font-mono-tech text-xs text-accentGold font-bold">// WORK_TIMELINE // 歷史演進日誌</span>
+            <h2 class="font-syne-hero text-3xl font-black text-techSilver mt-2">工作經歷與主要成果</h2>
+        </div>
+
+        <div class="relative pl-6 sm:pl-8 border-l border-white/10">
+
+            <!-- 經歷 1 (網頁設計主要職責與品牌維護) -->
+            <div class="mb-12 relative reveal">
+                <!-- 琥珀色發光元件節點 -->
+                <div class="absolute -left-[32px] sm:-left-[40px] top-1 bg-galleryBlack p-1">
+                    <div
+                        class="w-4 h-4 rounded-sm border border-neonAmber bg-galleryBlack relative flex items-center justify-center pulse-hotspot">
+                        <div class="w-1.5 h-1.5 bg-neonAmber rounded-sm"></div>
+                    </div>
+                </div>
+
+                <span class="font-mono-tech text-xs text-neonAmber font-bold">15 YRS (現職)</span>
+                <h3 class="text-lg font-bold font-syne-hero text-techSilver mt-1">品牌網頁設計、官網維護與工具自動化</h3>
+                <span class="text-xs font-mono-tech text-accentGold/60">// Landing Page 全流程實作、3,000+品項官網管理與 Vibe Coding
+                    提效</span>
+
+                <ul class="mt-4 space-y-2 text-xs text-techSilver/80 list-disc pl-5 font-sans">
+                    <li><strong>產品 Landing Page（主要職責）</strong>：每一波新品上市，負責挑選產品製作一頁式行銷網頁。從理解產品定位、規劃資訊架構，到撰寫 HTML5/CSS3
+                        響應式版面語法全流程獨立完成。代表作包括第三代膠把螺絲起子、行動診斷車、數顯型電壓測試儀等。</li>
+                    <li><strong>品牌官網維護（3,000+ 品項）</strong>：管理含有 3,000
+                        多項產品的品牌官方網站，包含新品資料上架、既有產品規格異動的即時更新與頁面維護。憑藉有條理的作業習慣確保龐大品項資訊精準不出錯。</li>
+                    <li><strong>Vibe Coding 工具開發</strong>：以 LLM 協作自行開發 Chrome 擴充功能（「後台 HTML 上傳工具」、「官網資料核對小幫手」整合 Gemini
+                        API、以及「郵件智慧分類 Email Classifier」自動擷取品號同步本地資料庫）；並開發「產品專案進度甘特圖 Web App」供跨部門即時查看進度。</li>
+                </ul>
+            </div>
+
+            <!-- 經歷 2 (這幾年學了什麼，以及怎麼把它用出來) -->
+            <div class="mb-12 relative reveal">
+                <div class="absolute -left-[32px] sm:-left-[40px] top-1 bg-galleryBlack p-1">
+                    <div
+                        class="w-4 h-4 rounded-sm border border-neonAmber bg-galleryBlack relative flex items-center justify-center pulse-hotspot">
+                        <div class="w-1.5 h-1.5 bg-neonAmber rounded-sm"></div>
+                    </div>
+                </div>
+
+                <span class="font-mono-tech text-xs text-neonAmber font-bold">PRACTICAL SKILLS</span>
+                <h3 class="text-lg font-bold font-syne-hero text-techSilver mt-1">這幾年學了什麼，以及怎麼把它用出來</h3>
+                <span class="text-xs font-mono-tech text-accentGold/60">// 視聽語言、單眼/手機拍攝、Premiere 剪輯與 AIGC 工作流</span>
+
+                <ul class="mt-4 space-y-2 text-xs text-techSilver/80 list-disc pl-5 font-sans">
+                    <li><strong>視聽語言與攝影剪輯</strong>：2022 年完整修讀「視聽語言」課程，系統學習電影工業攝影美學與剪輯觀念。以單眼相機全手動模式獨立完成靜態產品拍攝；手機拍攝 B-roll
+                        與操作示範片段，透過 Adobe Premiere Pro 剪輯輸出完整介紹影片。</li>
+                    <li><strong>AI 影片與動畫預告片</strong>：以傳統剪輯觀念（動接動、L-Cut、平行蒙太奇）撰寫 Gemini Veo 3 的 Prompt 指令，完成 90 秒動畫預告片。
+                    </li>
+                    <li><strong>AI 繪本量產出版</strong>：搭配 Nano Banana 2 及 GPT images 2.0 解決跨頁角色特徵不連貫問題，製作出可直接送廠印刷的故事繪本。</li>
+                </ul>
+            </div>
+
+            <!-- 經歷 3 (型錄排版與平面設計) -->
+            <div class="mb-12 relative reveal">
+                <div class="absolute -left-[32px] sm:-left-[40px] top-1 bg-galleryBlack p-1">
+                    <div
+                        class="w-4 h-4 rounded-sm border border-white/10 bg-galleryBlack relative flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 bg-accentGold rounded-sm"></div>
+                    </div>
+                </div>
+
+                <span class="font-mono-tech text-xs text-accentGold font-bold">EXTENDED SKILLS</span>
+                <h3 class="text-lg font-bold font-syne-hero text-techSilver mt-1">型錄排版與平面視覺設計</h3>
+                <span class="text-xs font-mono-tech text-techSilver/40">// 複雜規格網格層級化排版、雜誌廣告與廠區美化</span>
+
+                <ul class="mt-4 space-y-2 text-xs text-techSilver/80 list-disc pl-5 font-sans">
+                    <li><strong>公司產品目錄與工具年鑑</strong>：長期負責公司產品目錄的封面與內頁排版（如 TPT0222），以清楚的網格版面搭配精密的向量產品圖，讓龐大資料易讀又有質感。</li>
+                    <li><strong>平面廣告與宣傳印件</strong>：設計手工具工會雜誌廣告稿、海外雜誌廣告、公司簡介型錄及展會三摺頁推廣宣傳品。</li>
+                    <li><strong>廠區環境美化大圖輸出</strong>：負責廠區各棟環境海報與大型防水帆布輸出，累計處理超過 57 幅。</li>
+                </ul>
+            </div>
+
+            <!-- 經歷 4 (展覽攤位視覺) -->
+            <div class="mb-12 relative reveal">
+                <div class="absolute -left-[32px] sm:-left-[40px] top-1 bg-galleryBlack p-1">
+                    <div
+                        class="w-4 h-4 rounded-sm border border-white/10 bg-galleryBlack relative flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 bg-accentGold rounded-sm"></div>
+                    </div>
+                </div>
+
+                <span class="font-mono-tech text-xs text-accentGold font-bold">BIENNIAL EVENTS</span>
+                <h3 class="text-lg font-bold font-syne-hero text-techSilver mt-1">國際展覽攤位視覺統籌</h3>
+                <span class="text-xs font-mono-tech text-techSilver/40">// 大約每兩年配合一次參展需求之整體視覺交付</span>
+
+                <ul class="mt-4 space-y-2 text-xs text-techSilver/80 list-disc pl-5 font-sans">
+                    <li><strong>國際參展攤位統籌</strong>：大約每兩年配合國際展覽需求，獨立統籌展覽攤位整體視覺。曾操刀德國科隆汽配展（Automechanika）、法蘭克福展、台北國際工具機展，從輸出尺寸規劃、大型牆面合成至送印完稿獨立處理。
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 經歷 5 (幾件讓我更了解自己工作方式的事) -->
+            <div class="relative reveal">
+                <div class="absolute -left-[32px] sm:-left-[40px] top-1 bg-galleryBlack p-1">
+                    <div
+                        class="w-4 h-4 rounded-sm border border-white/10 bg-galleryBlack relative flex items-center justify-center">
+                        <div class="w-1.5 h-1.5 bg-accentGold rounded-sm"></div>
+                    </div>
+                </div>
+
+                <span class="font-mono-tech text-xs text-accentGold font-bold">WORK ETHICS</span>
+                <h3 class="text-lg font-bold font-syne-hero text-techSilver mt-1">幾件讓我更了解自己工作方式的事</h3>
+                <span class="text-xs font-mono-tech text-techSilver/40">// 敏捷應變、知識分享與高壓團隊交付</span>
+
+                <ul class="mt-4 space-y-2 text-xs text-techSilver/80 list-disc pl-5 font-sans">
+                    <li><strong>老闆臨時更換設計方向</strong>：案子進行中途老闆決定更換整體方向，重新釐清新方向的核心要求，評估手邊保留素材先交出基本版確認，最後在短時間內保住整體時程。深深體會到「需求調整是常態，能快速重新定位比抱怨更有用」。
+                    </li>
+                    <li><strong>主動辦 AI 工具內部教學</strong>：發現同事對 AI
+                        工具大多停留在名稱上，主動跟主管討論籌備並主持內部教學，帶大家實際上手操作整合進設計與資料整理流程。「有必要就直接去做，不用等人交辦」是我對帶後進的態度。</li>
+                    <li><strong>展覽前完成 3,000 項產品、近 500
+                            頁型錄</strong>：職涯中壓力最大的任務之一。將整本拆分成幾個工作區塊，依能力分配任務、建立版面規範，持續協調進度。全員分頭加班順利交付。高壓下我認為資深工作者最重要的不是自己做最快，而是讓整個小組能穩定持續輸出。
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Selected Works Section (精選作品網格與 JS 篩選) -->
+    <section id="work" class="max-w-7xl mx-auto px-6 py-16 border-b border-white/5 relative">
+        <div class="crop-mark crop-mark-tl"></div>
+        <div class="crop-mark crop-mark-tr"></div>
+        <div class="crop-mark crop-mark-bl"></div>
+        <div class="crop-mark crop-mark-br"></div>
+
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-12">
+            <div>
+                <span class="font-mono-tech text-xs text-accentGold font-bold">// THE_ARCHIVE // 作品精選檔案庫</span>
+                <h2 class="font-syne-hero text-3xl font-black text-techSilver mt-2">精選作品檔案庫</h2>
+                <p class="text-xs text-techSilver/50 font-mono-tech mt-2">// 預設展示 9 項跨領域精選作品。點選右上角各分類查看對應領域完整專案。</p>
+            </div>
+
+            <!-- 分類按鈕 (奢華藝廊風格) -->
+            <div class="flex flex-wrap gap-2 mt-6 lg:mt-0 font-mono-tech text-xs">
+                <button onclick="filterWorks('featured')"
+                    class="filter-btn px-4 py-2 border border-accentGold text-accentGold bg-accentGold/10 font-bold transition-all rounded">FEATURED_SELECTION</button>
+                <button onclick="filterWorks('web')"
+                    class="filter-btn px-4 py-2 border border-white/10 text-techSilver/60 hover:border-accentGold hover:text-accentGold transition-all rounded">CODE_RWD</button>
+                <button onclick="filterWorks('catalog')"
+                    class="filter-btn px-4 py-2 border border-white/10 text-techSilver/60 hover:border-accentGold hover:text-accentGold transition-all rounded">PRINT_LAYOUT</button>
+                <button onclick="filterWorks('exhibition')"
+                    class="filter-btn px-4 py-2 border border-white/10 text-techSilver/60 hover:border-accentGold hover:text-accentGold transition-all rounded">SPATIAL_EXHIBITION</button>
+                <button onclick="filterWorks('graphic')"
+                    class="filter-btn px-4 py-2 border border-white/10 text-techSilver/60 hover:border-accentGold hover:text-accentGold transition-all rounded">VISUAL_GRAPHIC</button>
+                <button onclick="filterWorks('video')"
+                    class="filter-btn px-4 py-2 border border-white/10 text-techSilver/60 hover:border-accentGold hover:text-accentGold transition-all rounded">VIDEO_WORK (6)</button>
+            </div>
+        </div>
+
+        <!-- 60 作品大網格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-grid">
+
+            <!-- 01. 5號會館迎賓室大幅海報 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_01: VISUAL</span>
+                        <span>WALL_POSTER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/5號會館-大圖輸出4-01.jpg" alt="5號會館迎賓室大幅海報"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間視覺 ] 5號會館迎賓室大幅牆面海報</strong><br><strong>設計理念：</strong>專為5號會館迎賓接待空間量身打造之大尺寸牆面輸出。畫面以極具速度張力的紅黑 F1 賽車馳騁賽道為主體，融合手繪油彩質感筆觸與動態速度線，搭配「Forging Ahead of the Competition」競速標語，向蒞臨貴賓傳達品牌專注極致工藝、勇於超越競品的熱血野心與專業動能。<br><strong>工具：</strong>Photoshop (超大尺寸高解析完稿 / 筆觸光影合成)、Illustrator (空間文字編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">5號會館迎賓室大幅海報
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">迎賓接待空間巨幅視覺牆面，F1 賽車馳騁筆觸融合標語，傳達超越競品的工藝動能。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Spatial_Graphic #Wall_Poster #Motorsport</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 02. 2012手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_02: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2012手工具工會雜誌稿.jpg" alt="2012 手工具工會雜誌廣告"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2012 台灣手工具工會專刊雜誌廣告</strong><br><strong>設計理念：</strong>經典品牌識別時期的專業雜誌形象稿。以品牌代表性深綠色與消光黑為視覺底色，主打核心專利快脫棘輪扳手與微距倒角鉻釩套筒組。排版講求堅實的結構秩序感，透過強烈側逆光勾勒工具邊緣金屬冷光，向產業同儕與進出口貿易商傳遞扎實的台灣製造品質。<br><strong>工具：</strong>Photoshop (高反差金屬調色與微距去背修光)、Illustrator (雜誌全頁出血與印刷完稿)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2012手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">早期經典綠黑主視覺，高反差棚拍光影呈現頂級棘輪扳手與多規格套筒工具組的淬鍊質感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Print_Ad #Ratchet_Tools</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 03. 2026 品牌目錄封面 - 時尚女版 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_03: PRINT</span>
+                        <span>CATALOG_COVER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026封面-女版.jpg" alt="2026 品牌目錄封面 - 時尚女版"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 目錄設計 ] 2026 品牌目錄封面（時尚女版）</strong><br><strong>設計理念：</strong>為跳脫傳統五金產業陽剛單一的刻板視覺，本版封面大膽引入專業女性技師與頂級灰色跑車、多功能工具推車之跨界對話。以極致光影對比刻畫車身流線曲面與鋼製工具的冰冷光澤，展現品牌進軍高端汽車維修與賽車工程後勤的多元國際視野。<br><strong>工具：</strong>InDesign (裝訂落版與色彩管理)、Photoshop (超跑與棚拍人物無縫合成)、Illustrator (向量標誌與標準字)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 品牌目錄封面 - 時尚女版
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">融合現代女性工程師形象與灰色超跑跑格，突破傳統黑手工業厚重氛圍，傳遞俐落俐落的精密感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Catalog_Cover #Modern_Industrial #Visual_Style</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 04. 2026 產品介紹頁 (03) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_04: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-03.jpg" alt="2026 產品介紹頁 (03) 數位選品系統與官方網站"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (03) - 官方數位選品與規格資料庫系統</strong><br><strong>設計理念：</strong>將實體紙本型錄與企業數位工具深度整合的引流跨頁。展示手機、平板、桌機三合一響應式介面，介紹技師如何透過官網輸入零件公英制尺寸或原廠料號，在數秒內精確檢索出對應手工具規格書與零組件料號，體現紙電整合的現代化服務體驗。<br><strong>工具：</strong>InDesign (資訊圖表階層整合)、Photoshop (跨裝置 UI 螢幕擬真打光渲染)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (03)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">跨頁介紹全新改版官方網站與智慧型即時搜尋系統，展現跨手機、平板、筆電的數位查規體驗。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Digital_Platform #Product_Search</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 05. 法蘭克福展攤位合成 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_05: EXHIBIT</span>
+                        <span>BOOTH_SIM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/2024法蘭克福_合成3.jpg" alt="德國法蘭克福展特裝攤位全景透視合成"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 2024 德國法蘭克福展特裝攤位全景透視合成 (3)</strong><br><strong>設計理念：</strong>雙開口角位（Corner Booth）全景透視空間規劃。整合正面開放式展示台、側方主力品項掛牆區與後方半隱密商務洽談區；地面採用防滑高承重工業地磚，並預留地底走線槽以支援現場高壓檢測機台動態示範，全方位展現國際一線工具品牌的展場規格。<br><strong>工具：</strong>Photoshop (多視角空間透視校正與泛光氛圍微調)、AutoCAD / Illustrator (平面動線平面圖對照)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">法蘭克福展攤位合成
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">全景開放式雙面開口架構，兼顧動線引流、獨立 VIP 簽約洽談室與倉儲備品動線規劃。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Automechanika #Panoramic_View #Traffic_Flow</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 06. 第三代膠把螺絲起子網頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="web" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_06: CODE</span>
+                        <span>PRODUCT_LP</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/網頁/NEW三代膠把螺絲起子網頁介紹02.png" alt="第三代膠把螺絲起子網頁介紹"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 產品網頁 ] 第三代膠把螺絲起子產品介紹頁</strong><br><strong>設計理念：</strong>以工程解析視角引導技師深入了解第三代雙料人體工學握柄的物理抗滑優勢。頁面區塊清楚拆解高抗扭 CR-V 合金鋼軸心、黑化防滑磁性刀頭與防滾動邊緣設計，搭配條理化規格對照表（長度、刃厚、PH/PZ/SL型號），大幅降低工業客戶採購核對時間。<br><strong>工具：</strong>Photoshop (產品去背與光影修飾)、Illustrator (結構爆炸圖向量繪製)、CSS3 彈性版面">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">第三代膠把螺絲起子網頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">以圖文對照解構人體工學三料手柄、高強度軸心結構與全系列規格清單，強化工程選品效率。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Landing_Page #Product_Design #Ergonomics</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 07. 絕緣工具箱新品介紹頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="web" data-featured="true" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_07: CODE</span>
+                        <span>SAFETY_LP</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/網頁/NEW絕緣工具箱-絕對路徑2.jpeg" alt="絕緣工具箱新品介紹頁"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 產品網頁 ] 專業級 VDE 1000V 絕緣工具箱介紹頁</strong><br><strong>設計理念：</strong>專為新能源車與電力工程維修市場規劃之專業推廣頁。重點展示全套 42 件經德國 VDE 嚴格認證的 1000V 絕緣手工具組合，詳盡列出工程級抗衝擊 ABS 手提箱、高密度客製化雙色防呆泡棉、雙重安全防護扣鎖等耐用細節，傳遞最高標準的施工防護信賴感。<br><strong>工具：</strong>Photoshop (情境合成與箱體修光)、Illustrator (VDE 檢驗標章與規格符號編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">絕緣工具箱新品介紹頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">聚焦 VDE 1000V 國際高壓安全認證與 42 件組模組收納，結合耐衝擊箱體規格提供完整解決方案。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#VDE_Insulated #Safety_Tools #Modular_Storage</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 08. 文創服飾社群宣傳短片 (Video 01) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-featured="true" data-video="作品集_s/影片/video_01.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_08: VIDEO</span>
+                        <span>BRAND_FILM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_01.png" alt="文創服飾社群宣傳短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_01.mp4"
+                            data-description="<strong>[ 動態影像 ] 文創生活服飾社群形象短片 (Video 01)</strong><br><strong>設計理念：</strong>文創生活服飾社群推廣短影音。全程採用自然光與大光圈定焦鏡頭實景側拍，以日系清新低飽和的膠卷感進行調色。鏡頭細緻捕捉天然棉麻布料的手感纖維肌理、服飾隨微風擺動的自然垂墜度與生活日常穿搭，搭配輕快舒緩的配樂節奏，創造兼具文青質感與高點擊率的社群氛圍。<br><strong>工具：</strong>Premiere Pro (剪輯節奏律動、轉場與雙聲道混音)、DaVinci Resolve (日系清新風格色彩調校)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">文創服飾社群宣傳短片 (Video 01)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">自然光實景側拍與日系清透色調調色，呈現純棉織品細緻肌理與慢活穿搭質感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Video_Production #Social_Reel #Color_Grading</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+            <!-- 09. 老宅手作早午餐探店形象短片 (Video 02) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-featured="true" data-video="作品集_s/影片/video_02.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_09: VIDEO</span>
+                        <span>CAFE_VLOG</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_02.png" alt="老宅手作早午餐探店形象短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_02.mp4"
+                            data-description="<strong>[ 動態影像 ] 老宅手作早午餐探店形象短影音 (Video 02)</strong><br><strong>設計理念：</strong>為紅磚老宅改造早午餐咖啡館拍攝之沉浸式短影音。運鏡穿梭於復古斑駁的磚牆與綠意植栽間，特寫單品手沖咖啡的細膩萃取過程與現烤出爐烘焙料理的誘人色澤，運用慢動作攝影與現場環境收音（咖啡水流聲、餐具輕碰聲），營造極具食慾與造訪渴望的人文溫度。<br><strong>工具：</strong>Premiere Pro (節奏剪輯與音效強化)、DaVinci Resolve (暖色調復古色調與高光柔化)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">老宅手作早午餐探店形象短片 (Video 02)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">老宅紅磚復古空間運鏡、咖啡手沖與現做餐點特寫，營造溫暖人文氛圍與打卡張力。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Short_Form_Video #Food_Cinematography #Gourmet</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+            <!-- 10. 企業官方網站首頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="web" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_10: CODE</span>
+                        <span>PORTAL_UI</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/網頁/D版面-首頁.jpg" alt="企業官方網站首頁改版設計"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 網頁設計 ] 企業官方網站首頁改版提案</strong><br><strong>設計理念：</strong>針對外銷 B2B 買主使用習慣重塑品牌入口門面。版面頂端規劃清晰的多國語系切換與全站即時料號搜尋，主視覺 Banner 強化工具精準質感與國際代理佈局。中段導入直覺式產品分類導航卡片（氣動、絕緣、套筒、工具車），縮短海外買家從進站到取得規格 PDF 的點擊路徑。<br><strong>工具：</strong>Figma (UI/UX 響應式原型)、Photoshop (主視覺影像調色與合成)、HTML5 / CSS3 / Tailwind CSS">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">企業官方網站首頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">重構外銷品牌官方入口網首頁，建立多語系切換、核心產品分類導航與跨裝置瀏覽架構。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Web_UI #RWD #Information_Architecture</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 11. 專業電工剪新品介紹頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="web" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_11: CODE</span>
+                        <span>SPEC_CATALOG</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/網頁/專業電工剪系列_en_線上.jpeg" alt="專業電工剪新品介紹頁"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 網頁型錄 ] 專業電工剪系列線上規格介紹頁</strong><br><strong>設計理念：</strong>針對歐美電力技師與水電工程市場規劃之英文版產品頁。透過高清晰度微距特寫突顯高碳鉬釩不鏽鋼刃面、精密防滑微齒與整合式壓接剝線槽等工藝細節。頁面條列三款主推型號之適用剪切線徑（銅線、鋁線、軟電纜）對照表，提供清晰無障礙的專業採購指引。<br><strong>工具：</strong>Photoshop (微距金屬質感修圖)、Illustrator (刀刃幾何角度圖示繪製)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">專業電工剪新品介紹頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">英文版線上型錄規格頁，微距細節呈現刀刃防滑齒槽與剝線切槽，協助海外技師精準比對料號。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Electrician_Shears #Catalog_UI #Product_Spec</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 12. 行動診斷車新品介紹頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="web" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_12: CODE</span>
+                        <span>EQUIPMENT_LP</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/網頁/診斷車新品介紹網頁.jpg" alt="行動診斷車新品介紹網頁"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 產品網頁 ] 汽修專業行動診斷工具車新品介紹頁</strong><br><strong>設計理念：</strong>以實車檢測情境與高精度外觀渲染圖為核心，解決汽修廠技師診斷電腦與高階檢測儀器無專用移動平台之痛點。頁面展示傾斜式筆電操作台、多功能外掛走線收納孔、5 吋高負重靜音煞車輪與中央安全防盜鎖定系統，建構兼具專業科技感與高耐用度的行動工作站形象。<br><strong>工具：</strong>Photoshop (廠景多圖光影合成)、Illustrator (機構尺寸標註與機能導覽線圖)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">行動診斷車新品介紹頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">整合筆電作業平台、大承重抽屜、管線收納與中控鎖機制，專為汽修檢測打造之移動工作站專頁。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Diagnostic_Trolley #Workshop_Equipment #Product_LP</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 13. 2026 品牌目錄封面 - 專業男版 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_13: PRINT</span>
+                        <span>CATALOG_COVER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026封面-男版.jpg" alt="2026 品牌目錄封面 - 專業男版"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 目錄設計 ] 2026/27 品牌綜合工具目錄封面（專業男版）</strong><br><strong>設計理念：</strong>雙年刊重量級綜合型錄封面設計。以聚光燈下的資深維修工程師緊握精準扭力扳手為主視覺，背景巧妙融入工具車抽屜的層疊秩序感。封面標題「Quality & Performance」採特黑金屬質感調校，封底條理規劃國際認證標章、全球授權總部聯絡資訊與滾輪式重型工具拉桿包新品導購。<br><strong>工具：</strong>InDesign (全書落版與跨頁版面整合)、Photoshop (人物光影精修與金屬質感強化)、Illustrator (燙金線條與向量文字)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 品牌目錄封面 - 專業男版
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">深邃沉穩基調結合專注作業的資深技師主視覺，展現品牌 40 年深耕專業工具領域的厚實底蘊。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Catalog_Cover #Editorial_Design #Brand_Identity</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 14. 2026 產品介紹頁 (01) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_14: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-01.jpg" alt="2026 產品介紹頁 (01) 企業形象與全球佈局"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (01) - 企業形象與全球經銷版圖</strong><br><strong>設計理念：</strong>型錄首篇形象跨頁，擔綱海外買主第一眼認識企業實力的關鍵任務。版面左側井然有序梳理企業 40 年技術研發大事記、台中現代化營運總部實景與 ISO 9001 檢驗認證；右側以高精度世界地圖結合百餘國國旗圖示，視覺化呈現品牌行銷全球的龐大經銷網絡與服務據點。<br><strong>工具：</strong>InDesign (主版網格與多國文字排版)、Illustrator (向量世界地圖與旗幟繪製)、Photoshop (建築廠區空拍校正)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (01)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">型錄開篇企業簡介跨頁，整合 40 年工藝沿革、總部廠區空拍、ISO 認證與全球經銷版圖。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Company_Profile #Global_Network</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 15. 2026 產品介紹頁 (02) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_15: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-02.jpg" alt="2026 產品介紹頁 (02) 賽事贊助與國際大展"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (02) - 頂級賽事贊助與全球專業大展</strong><br><strong>設計理念：</strong>以實證角度展示品牌在國際極限運動與商業市場的活躍度。跨頁嚴選達卡越野賽事、國際重機錦標賽技師於泥濘高溫惡劣環境下使用工具的震撼抓拍，搭配德國法蘭克福展 (Automechanika) 與科隆五金大展的特裝攤位盛況，建立深受全球職業車隊信賴的專業形象。<br><strong>工具：</strong>InDesign (多圖格線對齊編排)、Photoshop (動態賽事抓拍高動態範圍修整)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (02)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">紀錄拉力賽車後勤贊助、重機賽事實測，以及德國法蘭克福汽配展與科隆五金展國際參展實況。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Motorsport #Global_Exhibition</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 16. 2026 產品介紹頁 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_16: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-04.jpg" alt="2026 產品介紹頁 (04) 智慧製造與鍛造加工產線"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (04) - 一貫化智慧製造與鍛造加工產線</strong><br><strong>設計理念：</strong>以嚴謹的工業流程攝影揭密產品誕生歷程。跨頁左側展示千噸級高溫自動模鍛機與高精度 CNC 複合加工線，右側清楚圖解高溫連續熱處理滲碳退火爐與多道環保抗蝕電鍍池，透過工廠實景讓海外客戶直觀理解每一把扳手兼具高韌性與抗磨損的製程關鍵。<br><strong>工具：</strong>InDesign (工業製程圖文網格)、Photoshop (高溫鍛造火光與產線環境抑噪修色)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">展示高溫落錘鍛造、CNC 精密銑削、全自動熱處理爐與自動電鍍產線，傳遞高規製造硬實力。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Manufacturing #Forging_CNC</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 17. 2026 產品介紹頁 (05) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_17: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-05.jpg" alt="2026 產品介紹頁 (05) 國家級品保實驗室與檢測設備"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (05) - 國家級品質保證實驗室與檢測標準</strong><br><strong>設計理念：</strong>展現產品超越 ANSI / DIN 國際標準的科學實證跨頁。清晰呈現扭力極限破壞測試機、全數位洛氏硬度計、百小時中性鹽霧防鏽測試箱與三次元高精密量測儀等專業實驗室設備，藉由具體量測數據與精密指針圖示，建立無可撼動的專業信賴感。<br><strong>工具：</strong>InDesign (精密量測數據表格編排)、Photoshop (檢驗設備光影純淨度校正)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (05)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">詳解數位扭力破壞測試、洛氏硬度計、鹽霧耐腐蝕測試與三次元量測，呈現超越標準的品質承諾。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Quality_Control #Laboratory_Testing</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 18. 2026 產品介紹頁 (06) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_18: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-06.jpg" alt="2026 產品介紹頁 (06) VDE 絕緣手工具安全檢驗"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (06) - 嚴苛 VDE 絕緣工具安全認證檢測</strong><br><strong>設計理念：</strong>深入說明絕緣工具如何取得歐盟最具權威之 VDE / IEC 60900 國際認證。跨頁圖解 10,000V 水中通電防穿透高壓測試、-25°C 低溫冷凍衝擊撞擊試驗、手柄高負重拉拔防脫落檢驗及垂直燃燒阻燃試驗，以科學圖表與照片還原最嚴格的安全把關流程。<br><strong>工具：</strong>InDesign (安全規章欄位排版)、Illustrator (高壓安全標示向量轉換)、Photoshop (實驗照片光線增強)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (06)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">圖解 10,000V 水中通電耐穿透測試、-25°C 極端衝擊與拉拔阻燃檢驗，符合歐盟最高安全認證規範。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #VDE_Standards #Safety_Testing</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 19. 2026 產品介紹頁 (07) -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_19: PRINT</span>
+                        <span>EDITORIAL_SPREAD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2026-介紹頁-07.jpg" alt="2026 產品介紹頁 (07) 通路包裝與展售陳列架系統"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 型錄跨頁 ] 2026 產品介紹頁 (07) - 通路零售包裝與專業展售陳列架</strong><br><strong>設計理念：</strong>針對全球經銷門市零售規劃之系統性陳列方案跨頁。內容包含專利防竊手工具吊卡刀模結構、多色系識別標籤、外銷高強度瓦楞彩盒，以及為經銷商規劃之單面 / 雙面穿孔五金模組化展示架，協助海外店家快速建立高坪效且整齊劃一的品牌展售端點。<br><strong>工具：</strong>InDesign (商品陳列矩陣排版)、Photoshop (展示架與五金產品情境渲染)、Illustrator (展示架模組尺寸圖)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026 產品介紹頁 (07)
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">展示多款防竊吊卡刀模、環保紙盒包裝，以及可自由擴充之模組化金屬五金展示貨架系統。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Editorial_Spread #Retail_Packaging #Display_Stands</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 20. 機械品牌型錄封面 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_20: PRINT</span>
+                        <span>CATALOG_COVER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2018_封面.jpg" alt="機械品牌型錄封面"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 封面設計 ] ROTAR 專業機械工業型錄封面</strong><br><strong>設計理念：</strong>為工業機械工具品牌 ROTAR 量身打造之年度總目錄封面。主視覺採企業標準深綠色為底蘊，運用斜向俐落的金屬幾何線條與零件等角透視網格交織，打破重機械型錄沉悶刻板的陳舊印象，呈現洗鍊、俐落且具高度工業前瞻性的國際品牌格局。<br><strong>工具：</strong>Illustrator (幾何斜切骨架與金屬銀向量排版)、Photoshop (底紋雜訊質感烘托)、InDesign (裝訂落版)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">機械品牌型錄封面
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">ROTAR 工業機械年度型錄封面，以沉穩科技綠結合幾何透視網格，詮釋重工機具的硬派精密感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Industrial_Catalog #Machine_Tools #Brand_Cover</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 21. 目錄封面裡設計 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_21: PRINT</span>
+                        <span>EDITORIAL_IFC</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/2018_封面裡.jpg" alt="目錄封面裡設計"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 內頁設計 ] ROTAR 機械型錄封面裡（IFC）企業形象頁</strong><br><strong>設計理念：</strong>型錄掀開第一印象之封面裡（Inside Front Cover）扉頁規劃。視覺語彙完全呼應封面的幾何折線動態，結合總經理致詞簽名、品牌核心精神標語與各項歐美品質標準認證標章，透過沉穩洗練的中英雙語排版，奠定整本目錄厚重嚴謹的企業信任基礎。<br><strong>工具：</strong>InDesign (雙語文字階層排版)、Illustrator (認證標章標準化重繪)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">目錄封面裡設計
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">型錄封二（IFC）形象扉頁，延續金屬折線語彙，整合經營者理念、品質認證標章與研發承諾。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#IFC_Design #Corporate_Profile #Typography</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 22. 電動工具目錄封面 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_22: PRINT</span>
+                        <span>POWER_TOOLS</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/TPT0222-封面D.jpg" alt="電動工具目錄封面"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 特輯封面 ] 專業充電式電動工具特輯型錄封面</strong><br><strong>設計理念：</strong>針對專業級鋰電無碳刷（Brushless）手持電動工具系列規劃之專刊封面。微距捕捉衝擊扳手機身的高強度金屬齒輪箱與防滑握把肌理，藉由掠過工具外緣的冷調科技光束強化「Power & Efficiency」動力訴求，精準鎖定追求高施工效率的汽車底盤維修技師。<br><strong>工具：</strong>Photoshop (高反差金屬光影修圖與粒子特效)、Illustrator (動力標章標準字設計)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">電動工具目錄封面
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">高階無碳刷衝擊扳手特寫為主視覺，結合金屬科技光芒與高對比色系，主打汽車後勤專業動力。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Power_Tools #Cordless_Tools #Product_Brochure</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 23. 電動工具三摺目錄 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_23: PRINT</span>
+                        <span>TRIFOLD_DM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/電動工具三摺目錄.jpg" alt="電動工具三摺目錄"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 手冊設計 ] 充電式電動工具系列雙面三摺目錄</strong><br><strong>設計理念：</strong>展會活動與業務外勤專用的輕巧三摺宣傳手冊（共六個完整頁面）。精準考量摺疊開啟時的讀者視覺動線，正面展開第一眼聚焦旗艦無刷機型與核心技術亮點，內頁全展開則以標準化欄位整齊羅列全系列空載轉速、衝擊頻率、扭力段數表及同平台電池充電座通用配件指南。<br><strong>工具：</strong>InDesign (三摺折頁落版與出血線安全邊距把控)、Illustrator (向量扭力圖表繪製)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">電動工具三摺目錄
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">雙面六頁面便攜型手冊，清晰展開各款電鑽與扳手之扭力曲線、規格料號及通用鋰電平台相容性。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Trifold_Brochure #Direct_Mail #Technical_Data</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 24. 目錄內頁規格排版 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="catalog" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_24: PRINT</span>
+                        <span>SPEC_TABLE</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/目錄/目錄排版設計01.jpg" alt="目錄內頁規格排版"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 規格排版 ] 工業手工具多品項規格內頁排版系統</strong><br><strong>設計理念：</strong>示範標準化高密度技術型錄的網格排版系統。頁面上方配置精密等角透視黑白工程圖面與機構尺寸標註（L, D1, D2, S），下方以高度邏輯化的多欄位表格井然羅列公制（mm）與英制（inch）尺寸、總重、包裝數與標準訂購代碼，確保大量料號在嚴苛印刷條件下依舊清晰易讀。<br><strong>工具：</strong>InDesign (資料庫欄位樣式建立與巢狀樣式排版)、Illustrator (工程等角剖面向量繪製)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">目錄內頁規格排版
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">工業級多欄位規格頁排版範例，整合等角透視零件線稿、公英制規格對照與 DIN/ISO 規範編碼。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Technical_Layout #Grid_System #Spec_Sheet</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 25. 法蘭克福展攤位合成 1 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_25: EXHIBIT</span>
+                        <span>BOOTH_SIM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/2024法蘭克福_合成1.jpg" alt="2024 德國法蘭克福汽配展特裝攤位 3D 透視合成 (攤位 F, G, H)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 2024 德國法蘭克福汽配展特裝攤位 3D 透視合成</strong><br><strong>設計理念：</strong>針對 Automechanika Frankfurt 展位 F、G、H 區規劃之特裝空間 3D 透視模擬。主入口以高 4 米之品牌綠色結構搭配側邊巨幅形象海報，上方橫樑標註 460x140cm 燈箱尺寸，配置 TOPTUL 招牌與底盤維修主視覺，結合綠色地毯、洽談區與展品背板，提供現場搭建施作之立體空間依據。<br><strong>工具：</strong>Photoshop (3D 空間透視打光與材質貼圖合成)、Illustrator (攤位看板標註與展板大圖輸出完稿)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">法蘭克福展攤位合成 1
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">2024法蘭克福汽配展特裝攤位 3D 透視模擬，標註 300x400cm 與 460x140cm 結構尺寸，結合品牌綠拱門與汽修實境視覺。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Exhibition_Design #Booth_Simulation #Automechanika</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 26. 法蘭克福展攤位合成 2 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_26: EXHIBIT</span>
+                        <span>BOOTH_SIM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/2024法蘭克福_合成2.jpg" alt="2024 德國法蘭克福汽配展 F 區正立面展開圖"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 2024 德國法蘭克福汽配展 F 區正立面展開示意</strong><br><strong>設計理念：</strong>法蘭克福展 F 區攤位正立面視覺展開圖。全景排布左側形象高塔、中央煞車卡鉗扭力緊固與工具車操作實務特寫橫幅，以及連續性黑白展板展示網格，標註燈具投射角度與標準色彩規範，利於展場施工廠商精確核對壁面圖形比例。<br><strong>工具：</strong>Illustrator (正立面比例展開排版、施工引線標註)、Photoshop (修圖合成與色彩校驗)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">法蘭克福展攤位合成 2
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">法蘭克福汽配展 F 區攤位正立面展開示意，完整展現實體壁面隔間、煞車卡鉗維修橫幅與網格展示背牆配置。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Exhibition_Elevation #Wall_Graphics #Automechanika</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 27. 德國科隆汽配展攤位合成 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_27: EXHIBIT</span>
+                        <span>BOOTH_SIM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/2024科隆展_合成D.jpg" alt="德國科隆五金汽配展特裝攤位合成"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 2024 德國科隆五金展（Eisenwarenmesse）特裝攤位合成</strong><br><strong>設計理念：</strong>專為世界最大五金工具展「德國科隆五金展」規劃之現代工業風展位。主體採用黑色粉體烤漆鋁合金桁架（Truss）搭建堅固骨架，配置 4000K 自然白光專業軌道投射燈，精準突顯金屬工具的切削細節與拋光光澤；中央階梯式立體展示台打造極具層次的專業視覺焦點。<br><strong>工具：</strong>Photoshop (空間擬真燈光衰減計算與材質疊加)、Illustrator (大尺寸高空包柱海報排版)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">德國科隆汽配展攤位合成
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">Eisenwarenmesse 特裝設計，黑色桁架結合高演色軌道投射燈，分區呈現重型工業手工具。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Cologne_Hardware_Fair #Truss_Structure #Exhibition_Design</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 28. 台北工具機展合成示意 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_28: EXHIBIT</span>
+                        <span>BOOTH_SIM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/2017工具機展合成.jpg" alt="台北國際工具機展攤位模擬合成"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 台北國際工具機展（TIMTOS）攤位空間模擬</strong><br><strong>設計理念：</strong>台北國際工具機展特裝攤位模擬。考量機械工具機零件與重型切削刀具的重量與防護需求，展台採用加強型鋼製結構與安全防撞倒角包覆。分區清楚標記銑刀、車刀、夾治具與測量儀器專區，營造井然有序的重工業加工專業氣場。<br><strong>工具：</strong>Photoshop (展場實景光影替換與透視貼圖)、Illustrator (工程文字標示與導引背板)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">台北工具機展合成示意
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">針對 TIMTOS 精密加工專業買家設計，強調高剛性展台承重結構與大型工件配件分類展示。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#TIMTOS #Machine_Tool_Show #Trade_Show</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 29. 國際展覽空間示意 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="exhibition" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_29: EXHIBIT</span>
+                        <span>SPATIAL_STAND</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/展覽/02a.jpg" alt="國際巡迴標準展覽空間示意"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 空間展覽 ] 國際巡迴展模組化快組展架系統示意</strong><br><strong>設計理念：</strong>專為海外代理商在當地自辦展覽與經銷大會規劃之標準化展具系統。全套結構採用快拆鋁合金骨架與阻燃抗皺熱昇華布旗，可收納至標準海運輪椅箱內。結構支援 3x3 米單格或 3x6 米長條型攤位彈性自由延伸，大幅降低各國代理商的海外展覽建置成本。<br><strong>工具：</strong>Illustrator (模組拆解組裝結構示意繪製)、Photoshop (快組展架與空間布幕實況渲染)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">國際展覽空間示意
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">為海外經銷商打造之可拆卸模組化展架系統，兼具海運裝箱防護與 3x3m / 3x6m 攤位彈性延伸。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Modular_Booth #Flexible_Display #Global_Tour</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 30. 2017手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_30: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2017手工具工會雜誌稿a-01.jpg" alt="2017 手工具工會雜誌廣告"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2017 手工具工會專刊廣告</strong><br><strong>設計理念：</strong>將工具置入真實汽修維修廠房的實景式廣告。主打旗艦款雙色重型工具推車與車底作業專用工具組，藉由地毯式陳列展示數十款抽屜分類模組，傳遞「專業車廠一站式完整解決方案」的強大供貨能力，建立車輛維修市場指名度。<br><strong>工具：</strong>Photoshop (廠房環境調光與工具車群組高光微調)、Illustrator (雜誌版面編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2017手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">主打旗艦款雙色重型工具推車與車底作業專用工具組，與精密汽修專用手工具的後勤能量。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Workshop_Tools #Tool_Trolley</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 31. 2018手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_31: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2018手工具工會雜誌稿3-01.jpg" alt="2018 手工具工會雜誌廣告 - YOUR BEST WORKING PARTNERS"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2018 手工具工會專刊廣告</strong><br><strong>設計理念：</strong>以真實汽車保養廠與輪胎庫存區為實景拍攝背景，聚焦於身穿 TOPTUL 專業制服之技師手持特工進行車身檢修的專注神情。前景以醒目的紅色 7 抽工具推車拉開展示整套梅開扳手組，搭配車台上的氣動工具與棘輪柄，直觀呼應左下角「YOUR BEST WORKING PARTNERS」品牌標語；右上角並行整合六大主力產品類別圖示，強化一站式專業後勤能量。<br><strong>工具：</strong>Photoshop (實景棚拍修光與工具車金屬質感調正)、Illustrator (雜誌落版與字級排版)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2018手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">以真實汽修廠實景結合紅色多抽工具車，呈現技師專注作業神情，呼應「YOUR BEST WORKING PARTNERS」專業夥伴定位。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Tool_Trolley #Workshop_Partner</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 32. 2021手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_32: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021手工具工會雜誌稿-var2.0-04.jpg" alt="2021 手工具工會雜誌廣告 - 104件組專業工具箱"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2021 台灣手工具專刊廣告</strong><br><strong>設計理念：</strong>主推 104 件組專業機械手提工具箱（ITEM NO: GCZ-104A）。以正視展開視角完整展示箱內上下雙層收納結構——上蓋插袋整齊固定鉗類與膠把螺絲起子，下層高密度成型泡棉精準嵌合木柄鐵鎚、六角扳手、活動扳手與捲尺等必備工具；左側搭配技師手持氣動衝擊扳手的穩健站姿，佐以手寫草寫體「The Best Work Partner」，兼顧工業專業度與外勤便攜性訴求。<br><strong>工具：</strong>Photoshop (工具箱商品去背與雙層金屬反光細節修飾)、Illustrator (產品料號階層文字與規格排版)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">主打 104 件組專業手提工具箱 (GCZ-104A)，以雙層展開視角詳盡展示鉗起子與木柄鐵鎚收納，搭配技師持氣動扳手形象。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Tool_Set #GCZ_104A #Toolbox</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 33. 2022手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_33: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2022手工具工會雜誌稿-var3.0-01.jpg" alt="2022 手工具工會雜誌廣告 - ONLINE PRESELECTION"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2022 手工具工會專刊廣告</strong><br><strong>設計理念：</strong>宣傳品牌官方「ONLINE PRESELECTION」數位線上選品系統。主視覺打破純陽剛黑手框架，以女技師手持 34mm 巨型鉻釩鋼梅開扳手蹲坐於汽車輪圈旁的時尚工業風為主景；版面右側運用大角度斜切色塊承載數位檢索引流資訊，清楚說明買家可透過手機與電腦至官網即時查詢最新品項與工具組規格，達成紙電整合的品牌行銷效益。<br><strong>工具：</strong>Photoshop (人物與車輛金屬反光合成調色)、Illustrator (斜切排版網格與數位選品文字階層)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2022手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">主打「ONLINE PRESELECTION」官網線上選品系統，以女技師手持 34mm 巨型扳手蹲於車輪旁之時尚工業風引導數位查規。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Online_Preselection #Digital_Search</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 34. 葡萄牙海外雜誌廣告 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_34: VISUAL</span>
+                        <span>OVERSEAS_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2022 葡萄牙雜誌v3.jpg" alt="葡萄牙汽修專業雜誌海外全頁廣告"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 海外廣告 ] 葡萄牙專業汽修雜誌全頁廣告（Revista Pós-Venda）</strong><br><strong>設計理念：</strong>針對南歐汽修售後維修市場量身打造的在地化雜誌廣告。精準遵循葡萄牙語語法結構與閱讀排版習慣，突顯旗艦級工具車在狹小歐洲保養廠內的靈活收納機能，並在頁面底端清楚標記葡萄牙當地獨家總代理商名銜、服務電話與官方網址，直接引流當地買家訂貨。<br><strong>工具：</strong>InDesign (葡語特殊變音字符相容排版與全頁輸出規格)、Photoshop (歐規工具車背景修飾)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">葡萄牙海外雜誌廣告
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">葡萄牙在地汽修專刊全頁廣告，葡文編排與當地經銷據點資訊，推廣歐洲旗艦版工具車。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Overseas_Ad #European_Market #Localization</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 35. 2023手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_35: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2023手工具工會雜誌稿-01.jpg" alt="2023 手工具工會雜誌廣告 - Yamaha MT-09 街跑重機保修"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2023 台灣手工具專刊廣告</strong><br><strong>設計理念：</strong>鎖定重型機車保修與極限改裝市場。畫面以經典街跑重機 Yamaha MT-09 為主體，捕捉女技師跪姿微調踏板連桿之實作瞬間；左側前景配置三層展開式金屬手提工具箱與套筒組，右後方豎立品牌綠白刀旗；主視覺下半部以力量感粗黑體「EXCELLENT」疊加綠色草寫「Quality & Performance」，並列出全球 120 國、128 家經銷商與 7,500 餘項產品之供貨實力。<br><strong>工具：</strong>Photoshop (重機金屬漆面光澤與三層鐵箱陰影校正)、Illustrator (複合字體排版與數據圖表編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2023手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">聚焦 Yamaha MT-09 街跑重機維修情境，前景配置三層展開式金屬鐵箱，以「EXCELLENT Quality & Performance」展現重機保修能量。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Yamaha_MT09 #Cantilever_Toolbox</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 36. 2024手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_36: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2024手工具工會雜誌稿-03.jpg" alt="2024 手工具工會雜誌廣告 - 專業鋼鋸架金屬切削"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2024 台灣手工具專刊廣告（金屬切削實況）</strong><br><strong>設計理念：</strong>真實呈現高強度金屬切削工序。畫面特寫技師配戴防護護目鏡與防滑手套，雙手穩固施力操作 TOPTUL 綠黑雙色專業鋼鋸架，鋸切緊固於重型綠色桌上虎鉗之金屬鋼管；右側以頂天立地的巨幅直向「EXCELLENT」文字搭配藍灰斜色帶上的「QUALITY & PERFORMANCE」，有力宣示工具在極限鋸切工況下的抗形變高剛性與鋒利耐久度。<br><strong>工具：</strong>Photoshop (高反差金屬光影強化與火花微粒修整)、Illustrator (直向巨幅字體排版與印前出血規範)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2024手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">特寫技師雙手操作專業鋼鋸架、鋸切虎鉗固定金屬鋼管之工藝動作，右側直向「EXCELLENT」凸顯重工業切削剛性。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Hacksaw #Bench_Vise #Cutting_Tools</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 37. 2024手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_37: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2024手工具工會雜誌稿-04.jpg" alt="2024 手工具工會雜誌廣告 - 汽修技師專業形象"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2024 台灣手工具專刊廣告（汽修硬漢形象）</strong><br><strong>設計理念：</strong>塑造專業、剛勁的頂級車廠技師硬派形象。身穿黑色背心的健碩技師自信交叉雙臂、肩扛拋光鍍鉻梅花開口扳手；背景緊湊整合掀開引擎蓋的進口轎車、綠色 7 抽工具推車與滿板工具壁掛架，營造裝備精良、蓄勢待發的汽修後勤氣場；右下角以「EXCELLENT」結合綠色色帶「QUALITY & PERFORMANCE」，精準傳遞第一線維修團隊的信賴與力量。<br><strong>工具：</strong>Photoshop (肌肉光影高動態範圍調整與金屬工具棚拍校色)、Illustrator (廣告文案與雜誌跨頁出血完稿)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2024手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">以健碩技師肩扛梅開扳手為主視覺，結合掀開引擎蓋轎車、綠色工具車與工具壁板，展現汽修第一線的硬派信賴感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Automotive_Repair #Professional_Mechanic</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 38. 2026手工具工會雜誌稿 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_38: VISUAL</span>
+                        <span>MAGAZINE_AD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2026手工具工會雜誌稿-01.jpg" alt="2026 手工具工會年度專刊主視覺廣告 - 美式巡航重機與金屬工具箱"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 平面廣告 ] 2026 最新手工具工會專刊主視覺廣告</strong><br><strong>設計理念：</strong>美式重機與俐落時尚騎士跨界視覺企劃。版面左側導入飽和度極高的鮮紅色滿版縱向色帶，內嵌大型旋轉白色「TOPTUL®」商標作為霸氣視覺錨點；主體由身著皮衣之女性騎士跨坐於客製美式巡航重機上、雙手平持鍍鉻扳手，前方地面端正陳列沖壓品牌立體字之經典銀色三層金屬鐵箱；搭配高架橋戶外水泥結構，以「EXCELLENT QUALITY & PERFORMANCE」呈現兼具重機狂放美學與頂級工藝的國際品牌視野。<br><strong>工具：</strong>Photoshop (戶外採光色彩平衡與重機電鍍配件修飾)、Illustrator (滿版紅底視覺分割與向量標準字完稿)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026手工具工會雜誌稿
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">左側鮮紅直條滿版大 LOGO，結合皮衣女騎士跨坐美式巡航重機與經典銀色金屬手提箱，展現狂放美學與頂級工藝。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Magazine_Ad #Cruiser_Motorcycle #Cantilever_Box</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 39. 2021產品宣傳DM -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_39: VISUAL</span>
+                        <span>PROMO_DM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021春緯傳單-05.jpg" alt="2021 產品宣傳 DM (版面 05)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 通路傳單 ] 2021 經銷通路新品促銷 DM（版面 05）</strong><br><strong>設計理念：</strong>針對第一線汽修保養廠業務推廣規劃之全彩 DM。首面主打高 CP 值的基礎汽修工具整套優惠專案，明確規劃搶眼的特惠價格標章與贈品回饋區塊，內部羅列完整工具內容規格、料號與建議售價，提供業務人員向保養廠老闆推銷時最強而有力的紙本促銷利器。<br><strong>工具：</strong>Illustrator (促銷色塊版面與價格標籤向量排版)、Photoshop (產品合購組修圖)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021產品宣傳DM
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">經銷通路全彩雙面折頁促銷單，規劃汽修廠專用套裝優惠、滿額贈禮與清晰料號價格表。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Promotion_DM #Direct_Mail #Dealership_Sales</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 40. 2021產品宣傳DM-2 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_40: VISUAL</span>
+                        <span>PROMO_DM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021春緯傳單-07.jpg" alt="2021 產品宣傳 DM-2 (版面 07)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 通路傳單 ] 2021 產品宣傳促銷傳單（版面 07）</strong><br><strong>設計理念：</strong>針對底盤與制動系統專項維修規劃之專題促銷 DM。嚴選 1/2 吋超輕量氣動扳手、輪胎專用防刮薄壁套筒組及煞車分泵活塞調整特工等熱銷消耗品項，以高對比黃黑警示配色刺激訂購慾望，大幅提升特定維修檔期的下單轉換率。<br><strong>工具：</strong>Illustrator (高反差促銷版面與商品圖表對齊)、Photoshop (單品修飾)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021產品宣傳DM-2
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">聚焦氣動衝擊扳手、長套筒組與煞車卡鉗維修特工，高對比價目引導快速下單。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Promotion_DM #Specialty_Tools #Pricing_Layout</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 41. 2021產品宣傳DM-3 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_41: VISUAL</span>
+                        <span>PROMO_DM</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021春緯傳單-07a.jpg" alt="2021 產品宣傳 DM-3 (版面 07a)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 通路傳單 ] 2021 產品宣傳傳單封底與訂單聯（版面 07a）</strong><br><strong>設計理念：</strong>DM 摺頁最後一面的實體訂單聯與服務窗口總表。排版包含客戶填寫聯絡方式之標準表格、傳真/電話下單指引、北中南各區責任業務代表名單及全系列非人為損壞保固承諾細則，確保傳單具備實體導購與訂單回收的閉環實用性。<br><strong>工具：</strong>Illustrator (表單表格繪製與印章備註欄格式化)、InDesign (全彩雙面印刷完稿)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021產品宣傳DM-3
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">促銷傳單封底訂單聯，包含各區業務聯絡窗口、傳真訂購單格式與產品保固條款明細。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Order_Form #Direct_Mail #Contact_Sheet</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 42. 2021辦公室外牆海報 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_42: VISUAL</span>
+                        <span>OUTDOOR_POSTER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021辦公室外牆海報-02.jpg" alt="2021 辦公室外牆海報 - 女性技師與梅開扳手公路主視覺"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 戶外視覺 ] 2021 辦公室外牆海報 - A GLOBAL BRAND 系列</strong><br><strong>設計理念：</strong>應用於廠區外牆之大尺寸形象橫幅。以夕陽暮色公路為背景，結合女性技師手扛大尺寸梅開扳手的主視覺，融入半透明科技光影方塊，右側以斜角白色區塊凸顯 TOPTUL 品牌標誌與「A GLOBAL BRAND IN THE PROFESSIONAL HAND TOOL INDUSTRY」標語，塑造具國際視野的專業手工具品牌形象。<br><strong>工具：</strong>Photoshop (人物光影融合、暮色公路調色與透視光效處理)、Illustrator (向量標誌排版與文字規範編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021辦公室外牆海報
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">暮色公路背景結合女性技師肩扛梅開扳手之視覺，搭配科技方塊光效，傳達專業手工具國際品牌意象。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Outdoor_Poster #Global_Brand #TOPTUL</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 43. 2021辦公室外牆海報 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_43: VISUAL</span>
+                        <span>OUTDOOR_POSTER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021辦公室外牆海報-03.jpg" alt="2021 辦公室外牆海報 - 重機賽道競技主視覺"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 戶外視覺 ] 2021 辦公室外牆海報 - 賽道競技系列</strong><br><strong>設計理念：</strong>外牆大尺寸動態橫幅海報。選用貼地壓車過彎的賽事重機為主體，車身配置 TOPTUL 品牌標誌，背景結合紫色光軌、散景與動態儀表光環，突顯極速競技感，直觀連結專業手工具在重機維修與極限賽事中具備的高性能與信賴感。<br><strong>工具：</strong>Photoshop (重機動態殘影與光軌合成、色彩對比調控)、Illustrator (斜切標準字與幾何版面編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021辦公室外牆海報
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">賽道重機極速壓車過彎主視覺，融合紫色動態光軌與散景，強化品牌在賽車與汽機車維修的專業實力。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Outdoor_Poster #Motorsport #Hand_Tools</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 44. 工廠帆布設計01 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_44: VISUAL</span>
+                        <span>FACTORY_BANNER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/B廠2F帆布 - V2-01.jpg" alt="工廠帆布設計 01 - B廠2F品質保證形象帆布"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 廠區帆布 ] B廠2F 工廠帆布設計 - DEPENDABLE QUALITY ASSURANCE</strong><br><strong>設計理念：</strong>設置於 B 廠 2 樓之大型形象帆布。以現代保修廠為情境背景，結合維修技師、旗艦級移動工具車與手提工具箱，右側以俐落的墨綠色斜切幾何塊面帶出「DEPENDABLE QUALITY ASSURANCE」主標，並條列市場研究、產品研發至量產檢驗等完整品保承諾內文。<br><strong>工具：</strong>Photoshop (實景棚拍修圖、工具車與技師光影整合)、Illustrator (幾何斜切色帶排版、英文文字排版)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">工廠帆布設計01
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">現代保修廠實景結合旗艦工具車與手提工具箱，搭配墨綠斜切色塊，清楚呈現全製程品保承諾與專業定位。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Factory_Banner #Tool_Trolley #Quality_Assurance</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 45. 工廠帆布設計02 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_45: VISUAL</span>
+                        <span>FACTORY_BANNER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/D廠帆布輸出2 - CS6-09.jpg" alt="工廠帆布設計 02 - D廠長條橫幅帆布系列提案"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 廠區帆布 ] D廠長條形橫幅帆布系列提案（8款版面總覽）</strong><br><strong>設計理念：</strong>針對 D 廠不同梁柱跨距與壁面比例規劃之長條形帆布方案。彙整 8 組版面配置，分別呈現氣動扳手、梅開扳手、卡鉗扭力緊固與多抽屜工具車等維修操作情境，運用標誌性的紅黑動態斜角幾何貫穿各版，統一標註「EXCELLENCE IN EVERY DETAIL」與「Made for Professionals」。<br><strong>工具：</strong>Illustrator (長條橫幅模組化排版、標準字與斜角識別規範)、Photoshop (工具實操特寫去背與色調一致化)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">工廠帆布設計02
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">工廠長條形橫幅帆布提案總覽，涵蓋氣動工具、手工具與工具車實操情境，以紅黑斜切幾何維繫高度識別一致性。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Factory_Banner #Banner_Series #Workshop_Tools</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 46. 工廠帆布設計03 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_46: VISUAL</span>
+                        <span>FACTORY_BANNER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/主題帆布-8示意.jpg" alt="工廠帆布設計 03 - 8款系列主題形象帆布示意"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 廠區帆布 ] 廠區系列主題形象帆布（8 款情境展示總覽）</strong><br><strong>設計理念：</strong>為廠區主要走廊與壁面規劃之模組化主題帆布。統一採用左側紅色品牌色塊、中間深灰「Made for Professionals」斜切標籤之標準版型，右側逐一展示工具車、引擎檢修、VDE 絕緣起子、棘輪扳手、汽門扭力設定、煞車注油、輪胎氣動拆卸與底盤施工等 8 大專業情境。<br><strong>工具：</strong>Illustrator (模組化識別系統與版面規格制定)、Photoshop (8組工具操作特寫局部精修與光影調校)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">工廠帆布設計03
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">8款模組化系列主題帆布，完整涵蓋引擎檢修、絕緣電工、底盤保修與工具車管理等工況，建立標準化識別。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Factory_Banner #Modular_Design #Professional_Tools</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 47. 工廠帆布設計04 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_47: VISUAL</span>
+                        <span>FACTORY_BANNER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/春錫研磨廠一樓帆布6-12.jpg" alt="工廠帆布設計 04 - 春錫研磨廠一樓形象帆布 (黑橘配色款)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 廠區帆布 ] 春錫研磨廠一樓形象帆布（黑橘配色提案）</strong><br><strong>設計理念：</strong>春錫研磨廠一樓廊道大型簡介帆布。以沉穩黑灰為底，結合右側暖橘色幾何圓弧破格設計，左側凸顯「ROTAR - NEW SOLUTIONS FOR POLISHING」標誌，下方條列「振動研磨」（金屬／非金屬代工拋光）與「機械製造」（工件測試、整廠規劃、耗材技術諮詢）兩大業務範疇，傳達專業俐落的機械製造形象。<br><strong>工具：</strong>Illustrator (雙語業務項目排版、向量圓弧造型)、Photoshop (暗色系大圖噴繪色票調校與輸出檔管理)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">工廠帆布設計04
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">春錫機械一樓簡介帆布（黑橘配色款），統整「振動研磨」與「機械製造」核心業務，以黑灰底色襯托暖橘弧形視覺。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Factory_Banner #Rotar_Machinery #Vibratory_Grinding</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 48. 工廠帆布設計05 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_48: VISUAL</span>
+                        <span>FACTORY_BANNER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/春錫研磨廠一樓帆布6-13.jpg" alt="工廠帆布設計 05 - 春錫研磨廠一樓形象帆布 (企業綠配色款)"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 廠區帆布 ] 春錫研磨廠一樓形象帆布（企業綠配色提案）</strong><br><strong>設計理念：</strong>與 04 款採相同排版結構之替代配色提案。主色調轉為春錫企業識別代表色「工業深綠」，ROTAR 標誌以紅色立體字型強化跳色對比，右側維持橘色圓弧導引視覺。同樣呈現振動研磨代工與機械設備製造雙主軸，為廠房空間提供不同氛圍且高識別度的色彩選擇。<br><strong>工具：</strong>Illustrator (企業標準色轉換、色彩對比微調)、Photoshop (大尺寸帆布噴繪色彩配置與輸出準備)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">工廠帆布設計05
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">春錫機械一樓簡介帆布（企業綠配色款），與 04 款採相同版面架構，改以春錫品牌深綠為主色系，提供不同廠房氛圍之配色提案。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Factory_Banner #Colorway_Variant #Rotar_Machinery</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 49. 2021toptul聖誕卡 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_49: VISUAL</span>
+                        <span>HOLIDAY_CARD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2021toptul聖誕卡-01.jpg" alt="2021 TOPTUL 聖誕賀卡 - 原木風與工具拍立得展示"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 節慶設計 ] 2021 TOPTUL 品牌年度聖誕賀卡</strong><br><strong>設計理念：</strong>以溫暖質感的原木桌面為基底，陳列松針、松果、肉桂棒、暖光蠟燭與復古航空信封等節慶物件。畫面中央以拍立得相片形式，展示手提工具箱、Pro-Plus 防滑起子組與技師引擎檢修實景，在保有濃厚歐美聖誕節慶氛圍的同時，自然融入核心手工具產品線。<br><strong>工具：</strong>Photoshop (實物靜物光影調色、拍立得相框透視合成)、Illustrator (中英文節慶祝福文字與高層簽署編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2021toptul聖誕卡
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">原木桌面搭配松果、肉桂與耶誕信封，以拍立得相片形式展示綠色工具箱、防滑起子組與引擎檢修實景，營造溫暖節慶感。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Holiday_Card #Christmas #Polaroid_Mockup</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 50. 2023聖誕卡版本 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_50: VISUAL</span>
+                        <span>HOLIDAY_CARD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2023toptul聖誕卡var2-02.jpg" alt="2023 TOPTUL 聖誕賀卡 - 3D卡通角色與綜合工具組"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 節慶設計 ] 2023 TOPTUL 聖誕賀卡（版本 2）</strong><br><strong>設計理念：</strong>採雙分割對比構圖的節慶賀卡。左側為散景聖誕樹與精美禮物盒，下方陳列展開的 TOPTUL 綠色綜合套筒起子工具箱；右側運用亮紅色底襯托立體 3D 卡通耶誕老人、麋鹿與雪人角色，搭配復古聖誕雪橇印章標題與中英賀詞，呈現活潑溫馨的年節氛圍。<br><strong>工具：</strong>Photoshop (左側實物工具箱修圖與光影景深合成)、Illustrator (右側 3D 角色排版與節慶徽標標準字編排)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2023聖誕卡版本
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">雙分割版面融合聖誕樹景深與 3D 卡通耶誕老人、雪人插畫，左下置入實體綠色綜合套筒工具箱，兼具童趣與專業產品印象。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Holiday_Card #Christmas #Tool_Set</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 51. 2024toptul聖誕卡 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_51: VISUAL</span>
+                        <span>HOLIDAY_CARD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2024toptul聖誕卡var2-01.jpg" alt="2024 TOPTUL 聖誕賀卡 - 插畫耶誕老人與滿載工具雪橇"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 節慶設計 ] 2024 TOPTUL 品牌聖誕賀卡</strong><br><strong>設計理念：</strong>結合手繪插畫與 3D 產品渲染的節慶賀卡。以深邃沉穩的聖誕墨綠為底，描繪背著禮物袋踏雪前行的耶誕老人，身旁雪橇滿載 TOPTUL 旗艦工具推車、扭力扳手、木柄膠槌、捲尺與收納盒，將硬派專業工具擬化為佳節祝福的實用禮物，賦予品牌親和的人文溫度。<br><strong>工具：</strong>Illustrator (手繪耶誕老人插畫與雪地向量構圖)、Photoshop (工具車及手工具實體光影去背融合)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2024toptul聖誕卡
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">經典墨綠背景搭配手繪耶誕老人插畫，雪橇上滿載專業工具車、扭力扳手、膠槌與捲尺等產品，巧妙化身為實用聖誕禮物。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Holiday_Card #Christmas_Illustration #TOPTUL_Gifts</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 52. 2026toptul聖誕卡 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_52: VISUAL</span>
+                        <span>HOLIDAY_CARD</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/2026toptul聖誕卡var1cc-00.jpg" alt="2026 TOPTUL 聖誕賀卡 - 聖誕情境棚拍與紅色專業工具箱"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 節慶設計 ] 2026 TOPTUL 品牌最新聖誕跨年賀卡</strong><br><strong>設計理念：</strong>情境棚拍結合版面設計的跨年賀卡。上半部以木屋居家場景搭配佩戴聖誕帽之模特兒，身旁搭配鮮紅色 TOPTUL 專業重型工具箱與精裝禮物盒；下半部以波浪積雪造型切換至節慶紅底，配置經典襯線「MERRY CHRISTMAS」主標與中英雙語賀詞，呈現時尚精緻的跨國賀卡風格。<br><strong>工具：</strong>Photoshop (人物棚拍精修、光影調色與波浪雪地邊緣遮罩)、Illustrator (標準節慶字體排版與雙語署名設計)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">2026toptul聖誕卡
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">聖誕帽模特兒於溫馨木屋情境席地而坐，身側擺放紅色專業重型手工具箱，下方波浪雪地襯托精緻節慶紅底中英賀詞。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Holiday_Card #Photo_Mockup #Tool_Case</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 53. 節慶中秋禮盒封裝貼紙 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_53: VISUAL</span>
+                        <span>PACKAGING_STICKER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/中秋貼紙5_cs6-01.jpg" alt="節慶中秋禮盒封裝貼紙 - 4.5x15cm 刀模標註與異香齋禮盒貼附示意"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 包裝設計 ] 企業中秋伴手禮盒專用封裝長條貼紙</strong><br><strong>設計理念：</strong>春錫集團致贈客戶中秋伴手禮盒之長條形腰封貼紙（標註 4.5 × 15 cm 刀模尺寸）。頂端配置紅底圓形 ROTAR GROUP 標誌搭配祥雲與奔月白兔剪影，中段為古典書法「中秋佳節愉快」與雙語公司名；右側搭配台中名店「異香齋」糕餅外盒之貼附實體模擬，完整展現年節禮品包裝的尺寸規範與封箱視覺。<br><strong>工具：</strong>Illustrator (4.5x15cm 印刷刀模標註、祥雲玉兔向量繪製與排版)、Photoshop (禮盒封條實體貼附效果示意合成)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">節慶中秋禮盒封裝貼紙
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">4.5×15 cm 長條形封盒腰貼，結合 ROTAR 集團標誌與祥雲玉兔圖騰，標註尺寸規格並實物模擬於台中老店異香齋糕餅禮盒。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Packaging #Seal_Sticker #Mid_Autumn_Festival</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 54. 巴勒斯坦 NORM 賽車車體廣告 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_54: VISUAL</span>
+                        <span>VEHICLE_WRAP</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/巴勒斯坦NORM車用廣告圖檔3-A.jpg" alt="巴勒斯坦經銷商 NORM 授權商用車全車彩繪展開圖"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 車體彩繪 ] 巴勒斯坦經銷商商用巡迴服務車全車彩繪圖</strong><br><strong>設計理念：</strong>巴勒斯坦授權經銷商 NORM 旗艦商用維修廂型車（Mercedes-Benz Sprinter 高頂長軸版）全車身大圖輸出展開規劃。精準對齊車輛板金接縫、側滑門滑軌與後掀門外框，左右車側滿版展示品牌綠黑賽車動態條紋與高階工具車隊伍，打造行駛於中東街道上極具辨識度的流動看板。<br><strong>工具：</strong>Illustrator (1:10 汽車等比工程平面展開圖繪製)、Photoshop (超大解析車身合成與施工對位標示)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">巴勒斯坦 NORM 賽車車體廣告
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">Mercedes-Benz Sprinter 廂型維修車全車彩繪展開圖，精確迴避側滑門軌道與車窗結構。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Vehicle_Wrap #Sprinter_Van #Fleet_Branding</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 55. ZS-609 安全帽賽車風彩繪 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="graphic" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_55: VISUAL</span>
+                        <span>HELMET_DESIGN</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/平面設計/平面/ZS-609安全帽設計-翔 (4).jpg" alt="ZEUS ZS-609 半罩式安全帽賽車彩繪展開圖"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            data-description="<strong>[ 產品彩繪 ] ZEUS ZS-609 安全帽賽車風塗裝彩繪</strong><br><strong>設計理念：</strong>針對 ZEUS ZS-609 開面式安全帽規劃之競速風格水貼彩繪展開。針對帽體 3D 雙曲面拉伸特性進行補償運算，精準迴避頭頂進氣導流孔、耳蓋轉軸與後方排氣口，以銳利的鷹隼線條與漸層速度塊面，打造兼具流體力學視覺張力與量產良率的塗裝方案。<br><strong>工具：</strong>Illustrator (3D 曲面展開圖與熱轉印水貼刀模分色線)、Photoshop (立體曲面包覆效果模擬)">
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">ZS-609 安全帽賽車風彩繪
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">ZEUS 半罩式帽款 3D 曲面彩繪展開圖，銳利賽車速度流體線條避開曲面通風孔位。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Helmet_Design #Livery_Design #Water_Decal</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">DECONSTRUCT →</span>
+                </div>
+            </div>
+
+            <!-- 56. TOPTUL 衝擊扳手開箱宣傳短片 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-video="作品集_s/影片/video_03.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_56: VIDEO</span>
+                        <span>PRODUCT_TEASER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_03.png" alt="TOPTUL 衝擊扳手開箱宣傳短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_03.mp4"
+                            data-description="<strong>[ 動態影像 ] TOPTUL 旗艦衝擊扳手專業開箱影片</strong><br><strong>設計理念：</strong>為高規格鋰電無刷衝擊扳手量身打造之工業級開箱廣告。棚拍佈光運用高對比冷光線條凸顯機身消光金屬外殼與人體工學包膠握柄，鏡頭高速微距特寫電池插拔卡榫的清脆反饋、正反轉指撥撥鈕與無段調速板機行程，並實測拆卸大扭力鏽蝕輪胎螺栓，展現強悍動能。<br><strong>工具：</strong>Premiere Pro (快節奏開箱節奏卡點剪輯)、After Effects (動態規格資訊字卡與扭力指針動畫)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">TOPTUL 衝擊扳手開箱宣傳短片
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">暗色系棚拍布光，高速特寫電池裝卸卡準、雙向無級變速開關與高扭力拆卸實測。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Product_Video #Commercial_Lighting #Torque_Demo</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+            <!-- 57. TOPTUL 多功能工具箱開箱宣傳短片 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-video="作品集_s/影片/video_04.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_57: VIDEO</span>
+                        <span>PRODUCT_TEASER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_04.png" alt="TOPTUL 多功能工具箱開箱宣傳短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_04.mp4"
+                            data-description="<strong>[ 動態影像 ] TOPTUL 多功能工具箱開箱短片</strong><br><strong>設計理念：</strong>展示重型工程手提工具箱模組化設計的開箱短片。影片透過節奏明快的層次拆解運鏡，展示箱體雙側防脫安全金屬搭扣開合、上蓋內襯零件分類收納槽，以及專屬雙色防震 EVA 泡棉工具托盤的精準咬合，直觀傳遞其優異的防塵防水耐摔特性。<br><strong>工具：</strong>Premiere Pro (打擊卡點節奏剪輯與擬真音效鋪陳)、DaVinci Resolve (高質感塑料光影調色)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">TOPTUL 多功能工具箱開箱宣傳短片
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">俐落展示箱體多層卡扣鎖定、自定義 EVA 泡棉工具槽與強悍耐壓結構。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Product_Video #Unboxing #Modular_Case</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+            <!-- 58. TOPTUL 攜帶型套筒工具組開箱宣傳短片 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-video="作品集_s/影片/video_05.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_58: VIDEO</span>
+                        <span>PRODUCT_TEASER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_05.png" alt="TOPTUL 攜帶型套筒工具組開箱宣傳短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_05.mp4"
+                            data-description="<strong>[ 動態影像 ] TOPTUL 攜帶型套筒工具組展示短片</strong><br><strong>設計理念：</strong>強調外勤便攜性的輕巧套筒工具組動態展示。以極簡純白商品棚為背景，微距鏡頭平滑掠過鏡面鍍鉻套筒金屬表面、高清晰度雷射雕刻公制規格文字與專利球型棘輪接頭。搭配實景單手提攜與置入車廂收納的展示，傳達工藝精品般的精準定位。<br><strong>工具：</strong>Premiere Pro (商品慢動作特寫剪輯)、After Effects (金屬光澤流光線條特效與標準字動畫)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">TOPTUL 攜帶型套筒工具組開箱宣傳短片
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">白底極簡商品棚拍，微距特寫金屬霧面防鏽塗層、雷射雕刻規格字樣與單手提攜便利性。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Product_Video #Socket_Set #Macro_Shot</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+            <!-- 59. TOPTUL L型扳手系列開箱宣傳短片 -->
+            <div class="portfolio-card border border-white/5 p-4 bg-exhibitGray/20 flex flex-col justify-between group cursor-pointer hover:border-accentGold hover:shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all duration-300 rounded-lg"
+                data-category="video" data-video="作品集_s/影片/video_06.mp4" onclick="openLightbox(this)">
+                <div>
+                    <div class="flex justify-between items-start font-mono-tech text-[10px] text-techSilver/40">
+                        <span>// NODE_59: VIDEO</span>
+                        <span>PRODUCT_TEASER</span>
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden my-3 border border-white/5 bg-galleryBlack relative">
+                        <img src="作品集_s/影片/video_06.png" alt="TOPTUL L型扳手系列開箱宣傳短片"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" data-video="作品集_s/影片/video_06.mp4"
+                            data-description="<strong>[ 動態影像 ] TOPTUL L型扳手系列宣傳短片</strong><br><strong>設計理念：</strong>以俐落動態字卡（Kinetic Typography）搭配快節奏剪輯介紹專業 L 型六角與星型（Torx）扳手系列。微距展示球頭端 25 度傾斜作業倒角加工細節、高扭力 S2 合金鋼耐磨損特性，並動態示範專利塑膠收納夾扣的單手快取與鎖定機能，呈現高效率工藝精髓。<br><strong>工具：</strong>After Effects (動態字幕與幾何線條動畫合成)、Premiere Pro (重低音音效混音與節奏剪輯)">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
+                            <div class="w-12 h-12 rounded-full border border-accentGold/80 bg-galleryBlack/80 flex items-center justify-center text-accentGold group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-base mt-2 group-hover:text-accentGold transition-colors">TOPTUL L型扳手系列開箱宣傳短片
+                    </h3>
+                    <p class="text-xs text-techSilver/60 line-clamp-2 mt-1 font-sans">結合動態排版節奏，微距呈現球型倒角加工精度與專利快取收納座單手操作機能。</p>
+                </div>
+                <div
+                    class="border-t border-white/5 pt-3 mt-4 flex justify-between items-center font-mono-tech text-[10px]">
+                    <span class="text-accentGold">#Product_Video #Hex_Key #Kinetic_Typography</span>
+                    <span class="font-bold text-neonAmber group-hover:underline">PLAY_VIDEO ▶</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PDF Download (CMYK 印刷) -->
+    <section id="pdf"
+        class="max-w-7xl mx-auto px-6 py-16 border-b border-white/5 text-center bg-galleryBlack relative overflow-hidden">
+        <div class="crop-mark crop-mark-tl"></div>
+        <div class="crop-mark crop-mark-tr"></div>
+        <div class="crop-mark crop-mark-bl"></div>
+        <div class="crop-mark crop-mark-br"></div>
+
+        <div class="absolute top-4 right-4 text-[10px] font-mono-tech text-accentGold/40">PORTFOLIO_PDF_FORMAT
+        </div>
+
+        <div class="mb-4">
+            <span class="font-mono-tech text-xs text-accentGold font-bold">// ARCHIVE_PDF // 作品集檔案下載</span>
+            <h2 class="font-syne-hero text-3xl font-black text-techSilver mt-2">下載作品集 PDF</h2>
+        </div>
+
+        <p class="text-xs md:text-sm text-techSilver/70 max-w-2xl mx-auto mb-8 text-center leading-relaxed font-sans">
+            這裡整理了完整的作品集 PDF 檔案，包含網頁 UI、型錄排版與視覺設計細節，方便您離線瀏覽或存檔參考。
+        </p>
+
+        <div class="flex justify-center items-center gap-4 relative z-10">
+            <button onclick="alert('準備下載作品集 PDF 檔案...')"
+                class="bg-accentGold text-galleryBlack border border-accentGold px-8 py-4 font-mono-tech font-bold text-xs hover:bg-white hover:text-galleryBlack transition-all duration-300 tracking-widest rounded">
+                DOWNLOAD_PORTFOLIO_PDF ↓
+            </button>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-5 space-y-4">
+            <span class="font-mono-tech text-xs text-accentGold font-bold">// GET_IN_TOUCH // 聯絡與合作洽談</span>
+            <h2 class="font-syne-hero text-3xl font-black text-techSilver mt-2">聯絡我與合作洽談</h2>
+            <p class="text-xs md:text-sm text-techSilver/70 leading-relaxed text-justify font-sans">
+                在找一位能自己做 Landing Page 視覺設計和 HTML5/CSS3 切版，同時有型錄排版、展場視覺、Chrome 擴充功能開發和 AI 影音實作經驗的網頁設計師？<br>
+                歡迎在此填寫資料，或直接來信，我們可以進一步交流。
+            </p>
+            <div class="font-mono-tech text-xs space-y-2 pt-4 border-t border-white/5">
+                <div>SYSTEM_EMAIL: <a href="mailto:yuumu0419@gmail.com"
+                        class="text-accentGold font-bold hover:underline">yuumu0419@gmail.com</a></div>
+                <div>SECURE_COORDS: Taichung City, Taiwan (台中市)</div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-7 border border-white/5 p-6 bg-exhibitGray/20 rounded-lg">
+            <form onsubmit="handleContactSubmit(event)"
+                class="space-y-4 font-mono-tech text-xs text-techSilver/80">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-bold">// SENDER_ID / 稱呼</label>
+                        <input type="text" name="sender" placeholder="輸入您的稱呼或貴公司名稱" required
+                            class="border border-white/5 p-3 bg-galleryBlack outline-none text-accentGold focus:border-accentGold rounded font-sans">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-bold">// CONTACT_EMAIL / 聯絡信箱</label>
+                        <input type="email" name="email" placeholder="example@company.com" required
+                            class="border border-white/5 p-3 bg-galleryBlack outline-none text-accentGold focus:border-accentGold rounded">
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-bold">// INQUIRY_PROTOCOL / 洽詢類別</label>
+                    <select name="category"
+                        class="border border-white/5 p-3 bg-galleryBlack outline-none text-accentGold focus:border-accentGold rounded font-sans">
+                        <option value="網頁設計 / 前端相關職缺">網頁設計 / 前端相關職缺</option>
+                        <option value="型錄排版 / 平面設計專案委託">型錄排版 / 平面設計專案委託</option>
+                        <option value="AI 影音 / Chrome 擴充功能合作">AI 影音 / Chrome 擴充功能合作</option>
+                        <option value="其他合作洽詢">其他合作洽詢</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-bold">// PAYLOAD_DATA / 洽詢內容與說明</label>
+                    <textarea name="message" rows="4" placeholder="請描述您的合作限制、預期目標、交付時程..." required
+                        class="border border-white/5 p-3 bg-galleryBlack outline-none text-accentGold focus:border-accentGold rounded font-sans"></textarea>
+                </div>
+                <button type="submit"
+                    class="w-full bg-accentGold text-galleryBlack border border-accentGold p-4 font-bold hover:bg-white hover:border-white hover:text-galleryBlack transition-all duration-300 rounded font-black tracking-widest flex items-center justify-center gap-2">
+                    <span>SEND_INQUIRY_→</span>
+                    <span class="text-xs font-normal">（喚起郵件軟體送出）</span>
+                </button>
+                <div id="contact-status" class="hidden text-xs text-accentGold bg-accentGold/10 border border-accentGold/20 p-3 rounded text-center font-sans space-y-1">
+                    <div>✓ 已為您自動整理並喚起郵件軟體草稿！</div>
+                    <div class="text-techSilver/70 text-[11px]">若裝置未自動彈出郵件應用程式，您亦可直接來信至 <a href="mailto:yuumu0419@gmail.com" class="text-accentGold underline font-bold">yuumu0419@gmail.com</a></div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+        class="max-w-7xl mx-auto px-6 py-8 border-t border-white/5 bg-galleryBlack flex flex-col md:flex-row justify-between items-center text-xs font-mono-tech text-techSilver/40">
+        <div class="flex flex-col gap-1 items-center md:items-start">
+            <span>© 2026 TIRA_SPATIAL_DESIGN. ALL PROTOCOLS ENCRYPTED_</span>
+            <span class="text-[10px]">GRID SYSTEM COMPILED WITH: 𝛟 = 1.618</span>
+        </div>
+        <div class="flex space-x-6 mt-4 md:mt-0 font-mono-tech text-techSilver/40">
+            <span>BUILT_WITH_HTML5_CSS3_JS</span>
+        </div>
+    </footer>
+
+    <!-- 工藝風格 Lightbox Modal (四角帶有金色十字對位線，自適應長寬比排版) -->
+    <div id="lightbox" class="lightbox justify-center items-center" onclick="closeLightbox()">
+        <div id="lightbox-container" class="max-w-5xl mx-auto px-6 py-8 relative h-full flex flex-col justify-center transition-all duration-300"
+            onclick="event.stopPropagation()">
+            <!-- 燈箱曜石金卡片 -->
+            <div id="lightbox-card"
+                class="bg-galleryBlack border border-white/10 p-6 rounded-lg relative flex flex-col md:flex-row gap-6 max-h-[85vh] overflow-y-auto shadow-2xl transition-all duration-300">
+
+                <!-- 十字對位標記 -->
+                <div class="absolute -top-3 -left-3 w-6 h-6 pointer-events-none">
+                    <div class="absolute w-6 h-[1px] bg-accentGold top-1/2 left-0"></div>
+                    <div class="absolute h-6 w-[1px] bg-accentGold left-1/2 top-0"></div>
+                </div>
+                <div class="absolute -top-3 -right-3 w-6 h-6 pointer-events-none">
+                    <div class="absolute w-6 h-[1px] bg-accentGold top-1/2 left-0"></div>
+                    <div class="absolute h-6 w-[1px] bg-accentGold left-1/2 top-0"></div>
+                </div>
+                <div class="absolute -bottom-3 -left-3 w-6 h-6 pointer-events-none">
+                    <div class="absolute w-6 h-[1px] bg-accentGold top-1/2 left-0"></div>
+                    <div class="absolute h-6 w-[1px] bg-accentGold left-1/2 top-0"></div>
+                </div>
+                <div class="absolute -bottom-3 -right-3 w-6 h-6 pointer-events-none">
+                    <div class="absolute w-6 h-[1px] bg-accentGold top-1/2 left-0"></div>
+                    <div class="absolute h-6 w-[1px] bg-accentGold left-1/2 top-0"></div>
+                </div>
+
+                <!-- 關閉按鈕 -->
+                <button onclick="closeLightbox()"
+                    class="absolute top-4 right-4 z-20 border border-white/10 px-2.5 py-1 font-mono-tech text-xs bg-galleryBlack/90 text-techSilver hover:bg-accentGold hover:text-galleryBlack transition-all font-bold backdrop-blur-sm shadow-md">
+                    ESC_CLOSE_[X]
+                </button>
+
+                <!-- 左側/上方：作品展示區 (支援圖片與高畫質影片播放) -->
+                <div id="lightbox-media-wrapper"
+                    class="md:w-3/5 w-full flex items-center justify-center bg-[#0c0d12] border border-white/5 p-2 min-h-[260px] rounded">
+                    <img id="lightbox-img" src="" alt=""
+                        class="max-w-full max-h-[60vh] object-contain border border-white/10 bg-galleryBlack shadow-sm">
+                    <video id="lightbox-video" controls playsinline
+                        class="hidden max-w-full max-h-[60vh] object-contain border border-white/10 bg-galleryBlack shadow-sm"></video>
+                </div>
+
+                <!-- 右側/下方：印前規格說明 -->
+                <div id="lightbox-info-wrapper" class="md:w-2/5 w-full flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="font-mono-tech text-[10px] text-accentGold tracking-wider font-bold uppercase">//
+                                PROD_PROOF_LEAF</span>
+                            <span
+                                class="text-[9px] bg-exhibitGray text-accentGold px-1.5 py-0.5 rounded font-mono-tech">300
+                                DPI</span>
+                        </div>
+                        <h3 id="lightbox-title"
+                            class="font-syne-hero text-lg font-bold text-techSilver border-b border-white/5 pb-2">作品詳細規格
+                        </h3>
+                        <div id="lightbox-caption"
+                            class="hidden text-xs text-techSilver/80 mt-4 leading-relaxed space-y-2 text-justify font-sans">
+                            <!-- JS 填入內容 (目前依指示隱藏) -->
+                        </div>
+                    </div>
+
+                    <!-- 底部署名 & 校對色塊 (已隱藏) -->
+                    <div class="hidden border-t border-white/5 pt-4 font-mono-tech text-[10px]">
+                        <div class="flex justify-between text-techSilver/40 mb-2">
+                            <span>GRID: PHI = 1.618</span>
+                            <span>STATUS: PRINT_PROOF_OK</span>
+                        </div>
+                        <!-- CMYK 四色方塊 -->
+                        <div class="flex h-3 w-full border border-white/10">
+                            <div class="w-1/4 bg-cyan-500"></div> <!-- C -->
+                            <div class="w-1/4 bg-pink-500"></div> <!-- M -->
+                            <div class="w-1/4 bg-yellow-400"></div> <!-- Y -->
+                            <div class="w-1/4 bg-[#050608]"></div> <!-- K -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 交互程式碼 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ===================================
+            // 1. 平滑滾動與導覽
+            // ===================================
+            document.querySelectorAll('header nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // ===================================
+            // 2. 數字滾動動畫
+            // ===================================
+            function animateCounter(element) {
+                const target = parseInt(element.getAttribute('data-target'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            }
+
+            const statNumbers = document.querySelectorAll('.stat-number');
+            let countersAnimated = false;
+
+            function checkCounters() {
+                if (!countersAnimated) {
+                    const hero = document.getElementById('home');
+                    if (!hero) return;
+                    const rect = hero.getBoundingClientRect();
+                    if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                        statNumbers.forEach(stat => animateCounter(stat));
+                        countersAnimated = true;
+                    }
+                }
+            }
+
+            setTimeout(checkCounters, 400);
+
+            // ===================================
+            // 3. Scroll Reveal 元素滾動顯示
+            // ===================================
+            const reveals = document.querySelectorAll('.reveal');
+            function revealOnScroll() {
+                reveals.forEach(element => {
+                    const windowHeight = window.innerHeight;
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 120;
+
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', () => {
+                revealOnScroll();
+                checkCounters();
+
+                // 回到頂部按鈕顯隱
+                const backToTop = document.getElementById('back-to-top');
+                if (backToTop) {
+                    if (window.scrollY > 600) {
+                        backToTop.classList.add('show');
+                    } else {
+                        backToTop.classList.remove('show');
+                    }
+                }
+            });
+            revealOnScroll(); // 首次載入執行
+
+            // ===================================
+            // 3.1 漢堡選單切換
+            // ===================================
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (hamburgerBtn && mobileMenu) {
+                hamburgerBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('open');
+                });
+                // 點擊行動版選單連結後自動關閉
+                mobileMenu.querySelectorAll('a[href^="#"]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        mobileMenu.classList.remove('open');
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+                });
+            }
+
+            // ===================================
+            // 3.2 作品卡片滾動淡入 (IntersectionObserver)
+            // ===================================
+            const portfolioCards = document.querySelectorAll('.portfolio-card');
+            portfolioCards.forEach(card => card.classList.add('card-reveal'));
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        // 加上交錯延遲
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, i * 60);
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            portfolioCards.forEach(card => cardObserver.observe(card));
+            // ===================================
+            // 3.3 作品集預設只顯示前 9 張精選作品
+            // ===================================
+            const cards = document.querySelectorAll('#portfolio-grid > .portfolio-card');
+            cards.forEach((card, idx) => {
+                if (idx >= 9) {
+                    card.style.display = 'none';
+                }
+            });
+
+            // ===================================
+            // 4. 藝廊奢華風 Radar Chart (Chart.js)
+            // ===================================
+            const ctx = document.getElementById('skillsChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['網頁UI與前端', '型錄排版與印刷', '空間與大型輸出', '攝影與影片剪輯', 'AI視覺與自動化', '品牌平面視覺'],
+                        datasets: [{
+                            label: '專業熟練度 (DPI-SPEC)',
+                            data: [95, 98, 90, 92, 90, 90],
+                            backgroundColor: 'rgba(212, 175, 55, 0.15)', // 特裝陽極氧化金透明
+                            borderColor: '#D4AF37',                      // 特裝陽極氧化金線
+                            borderWidth: 2,
+                            pointBackgroundColor: '#050608',             // 曜石極黑點
+                            pointBorderColor: '#FF9F00',                 // 琥珀黃邊框
+                            pointHoverBackgroundColor: '#FF9F00',
+                            pointHoverBorderColor: '#050608',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                min: 0,
+                                max: 100,
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 20,
+                                    color: 'rgba(226, 232, 240, 0.5)',
+                                    backdropColor: 'transparent',
+                                    font: {
+                                        family: 'JetBrains Mono',
+                                        size: 9
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                },
+                                pointLabels: {
+                                    color: '#E2E8F0',
+                                    font: {
+                                        family: 'Orbitron',
+                                        size: 10,
+                                        weight: '600'
+                                    }
+                                },
+                                angleLines: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: '#12141C',
+                                titleColor: '#D4AF37',
+                                bodyColor: '#E2E8F0',
+                                borderColor: '#FF9F00',
+                                borderWidth: 1,
+                                cornerRadius: 4,
+                                padding: 10,
+                                callbacks: {
+                                    label: (context) => `熟練度: ${context.parsed.r}%`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+
+        // ===================================
+        // 5. 作品網格篩選 Filter 邏輯
+        // ===================================
+        function filterWorks(category) {
+            const cards = document.querySelectorAll('#portfolio-grid > .portfolio-card');
+
+            cards.forEach((card, idx) => {
+                const cardCategory = card.getAttribute('data-category');
+
+                if (category === 'featured' || category === 'all') {
+                    // 精選作品模式：只顯示前 9 張特挑作品
+                    if (idx < 9) {
+                        card.style.display = 'flex';
+                        card.classList.remove('visible');
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        }, 50);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 200);
+                    }
+                } else {
+                    // 主題分類模式：顯示該分類下的所有作品
+                    if (cardCategory === category) {
+                        card.style.display = 'flex';
+                        card.classList.remove('visible');
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        }, 50);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 200);
+                    }
+                }
+            });
+
+            // 更新按鈕高亮狀態
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-accentGold', 'text-accentGold', 'bg-accentGold/10');
+                btn.classList.add('border-white/10', 'text-techSilver/60');
+            });
+
+            if (event && event.target) {
+                event.target.classList.add('border-accentGold', 'text-accentGold', 'bg-accentGold/10');
+                event.target.classList.remove('border-white/10', 'text-techSilver/60');
+            }
+        }
+
+        // ===================================
+        // 6. Lightbox 燈箱開關與資訊對位渲染 (支援圖片與影片播放，自適應長寬比排版)
+        // ===================================
+        const lightbox = document.getElementById('lightbox');
+        const lightboxCard = document.getElementById('lightbox-card');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxVideo = document.getElementById('lightbox-video');
+        const lightboxTitle = document.getElementById('lightbox-title');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+
+        // 版型自適應切換：
+        // 寬比高大 (Landscape): 上下排版 (圖片在上面，作品描述在下面)
+        // 高比寬大 (Portrait): 維持原本排版 (左右排版)
+        function applyLightboxLayout(isLandscape) {
+            if (!lightbox) return;
+            if (isLandscape) {
+                lightbox.classList.add('is-landscape');
+                lightbox.classList.remove('is-portrait');
+            } else {
+                lightbox.classList.add('is-portrait');
+                lightbox.classList.remove('is-landscape');
+            }
+        }
+
+        function openLightbox(cardElement) {
+            const img = cardElement.querySelector('img');
+            const title = cardElement.querySelector('h3').innerText;
+            const description = img ? img.getAttribute('data-description') : '';
+            const videoSrc = cardElement.getAttribute('data-video') || (img ? img.getAttribute('data-video') : null);
+
+            if (lightbox) {
+                lightboxTitle.innerText = title;
+
+                // 重設燈箱捲軸至最上方
+                if (lightboxCard) {
+                    lightboxCard.scrollTop = 0;
+                }
+
+                if (videoSrc) {
+                    // 影片模式：寬比高大 (16:9) 預設套用上下排版
+                    applyLightboxLayout(true);
+                    if (lightboxImg) lightboxImg.classList.add('hidden');
+                    if (lightboxVideo) {
+                        lightboxVideo.classList.remove('hidden');
+                        lightboxVideo.src = videoSrc;
+                        lightboxVideo.onloadedmetadata = function() {
+                            if (this.videoWidth && this.videoHeight) {
+                                applyLightboxLayout(this.videoWidth >= this.videoHeight);
+                            }
+                        };
+                        lightboxVideo.play().catch(() => {});
+                    }
+                } else {
+                    // 圖片模式
+                    if (lightboxVideo) {
+                        lightboxVideo.pause();
+                        lightboxVideo.src = '';
+                        lightboxVideo.classList.add('hidden');
+                        lightboxVideo.onloadedmetadata = null;
+                    }
+
+                    if (lightboxImg && img) {
+                        lightboxImg.classList.remove('hidden');
+
+                        // 核心判斷：
+                        // 1. 寬比高大 (width >= height)：上下排版 (圖片在上面，作品描述在下面)
+                        // 2. 高比寬大 (height > width)：維持原本排版 (左右排版)
+                        if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                            applyLightboxLayout(img.naturalWidth >= img.naturalHeight);
+                        } else {
+                            // 預設為寬比高大 (上下排版)，等待大圖加載
+                            applyLightboxLayout(true);
+                        }
+
+                        // 監聽大圖載入完成事件，依真實尺寸精準校驗
+                        lightboxImg.onload = function () {
+                            if (this.naturalWidth > 0 && this.naturalHeight > 0) {
+                                applyLightboxLayout(this.naturalWidth >= this.naturalHeight);
+                            }
+                        };
+
+                        lightboxImg.src = img.src;
+                    }
+                }
+
+                if (description) {
+                    lightboxCaption.innerHTML = description;
+                } else if (img) {
+                    lightboxCaption.innerHTML = `<strong>${img.alt}</strong>`;
+                }
+
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('lightbox-show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeLightbox() {
+            if (lightbox) {
+                if (lightboxVideo) {
+                    lightboxVideo.pause();
+                    lightboxVideo.src = '';
+                    lightboxVideo.classList.add('hidden');
+                    lightboxVideo.onloadedmetadata = null;
+                }
+                lightbox.classList.remove('lightbox-show');
+                lightbox.classList.add('hidden');
+                document.body.style.overflow = '';
+                if (lightboxCard) {
+                    lightboxCard.scrollTop = 0;
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // ===================================
+        // 7. 聯絡表單送出（mailto 自動帶入內容）
+        // ===================================
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const sender = (form.elements['sender'] ? form.elements['sender'].value : '').trim();
+            const email = (form.elements['email'] ? form.elements['email'].value : '').trim();
+            const category = form.elements['category'] ? form.elements['category'].value : '其他合作洽詢';
+            const message = (form.elements['message'] ? form.elements['message'].value : '').trim();
+
+            if (!sender || !message) {
+                alert('請填寫您的稱呼與洽詢內容！');
+                return;
+            }
+
+            const recipient = 'yuumu0419@gmail.com';
+            const subject = encodeURIComponent(`【履歷合作洽詢】${category} - ${sender}`);
+
+            const bodyLines = [
+                `您好，我是 ${sender}。`,
+                '',
+                `【洽詢類別】：${category}`,
+                `【聯絡信箱】：${email || '未填寫'}`,
+                '',
+                `【需求與合作內容】：`,
+                message,
+                '',
+                '----------------------------------------',
+                '（此郵件由作品集個人網站 Contact Form 自動帶入草稿）'
+            ];
+
+            const body = encodeURIComponent(bodyLines.join('\r\n'));
+            const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
+
+            const statusDiv = document.getElementById('contact-status');
+            if (statusDiv) {
+                statusDiv.classList.remove('hidden');
+            }
+
+            window.location.href = mailtoUrl;
+        }
+
+    </script>
+
+    <!-- 回到頂部按鈕 -->
+    <button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="回到頂部">↑</button>
+</body>
+
+</html>
