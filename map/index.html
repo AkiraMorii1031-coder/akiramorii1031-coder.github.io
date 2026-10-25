@@ -190,7 +190,7 @@
     (function(){
       "use strict";
 
-      // ---------- 1. 道路中心線骨架（沿用原版底圖校正錨點） ----------
+      // ---------- 1. 道路中心線骨架（沿用底圖校正錨點） ----------
       // 中山路主幹道：建國路口(0) -> 20/21號(1) -> 綠川東街(2) -> 綠川西街(3) -> 電子街口(4) ->
       // 繼光街口(5) -> 141巷口(6) -> 自由路口(7) -> 199巷口(8) -> 市府路口(9) ->
       // 平等街口(10) -> 三民路口(11) -> 興中街口(12) -> 柳川東路口(13) -> 柳川西路口(14) -> 仁愛街口(15) -> 中華路口(16)
@@ -234,7 +234,7 @@
         minzuShifu:[24.13937, 120.67994]  // 市府路×民族路
       };
 
-      // --- 各縱向道路與河岸彎道骨架（嚴格收在台灣大道與民權路之間） ---
+      // --- 各縱向道路與河岸彎道骨架 ---
 
       // 1. 仁愛街（中山路口 -> 民族路口內側【小蝸牛市集支線】）
       var RENAI_LINE = [
@@ -242,43 +242,44 @@
         [24.14292, 120.67596]
       ];
 
-      // 2. 五權漫學堂（沿柳川東路三段河岸彎道：中山路口 -> 台灣大道一段口內側，順著河道微彎）
+      // 2. 五權漫學堂（沿柳川東路三段河岸彎道：中山路口 -> 台灣大道一段口內側）
       var LIUCHUAN_E_N = [
-        X.liuchuanE,           // 中山路×柳川東路三段轉角
-        [24.14318, 120.67756], // 河岸北段彎道錨點1
-        [24.14350, 120.67768], // 河岸北段彎道錨點2
-        [24.14380, 120.67778]  // 台灣大道一段口南側（不超出台灣大道）
+        X.liuchuanE,
+        [24.14318, 120.67756],
+        [24.14350, 120.67768],
+        [24.14380, 120.67778]
       ];
 
-      // 3. 斑馬市集（從中山路柳川橋面 -> 轉入柳川東路三段河岸彎道 -> 民族路口內側）
+      // 3. 斑馬市集（中山路柳川橋面 -> 轉入柳川東路三段河岸彎道 -> 民族路口內側）
       var ZEBRA_PATH = [
-        X.liuchuan,            // 中山路×柳川西路口
-        [24.14302, 120.67728], // 中山路柳川橋面
-        X.liuchuanE,           // 轉入中山路×柳川東路三段
-        [24.14266, 120.67724], // 河岸南段彎道錨點1
-        [24.14240, 120.67700], // 河岸南段彎道錨點2
-        [24.14216, 120.67674]  // 民族路口北側（不超出民族路）
+        X.liuchuan,
+        [24.14302, 120.67728],
+        X.liuchuanE,
+        [24.14266, 120.67724],
+        [24.14240, 120.67700],
+        [24.14216, 120.67674]
       ];
 
-      // 4. 平等街全線（嚴格收在「民權路口北側」至「台灣大道一段口南側」之間，頭尾不超出範圍）
+      // 4. 平等街全線（嚴格收在「民權路口北側」至「台灣大道一段口南側」之間）
       var PD = [
-        [24.13940, 120.67849], // 0: 民權路口北側內縮點（南端終點，不超出民權路）
-        [24.13972, 120.67882], // 1: 民族路～民權路中段（藥香時光）
+        [24.13940, 120.67849], // 0: 民權路口北側
+        [24.13972, 120.67882], // 1: 民族路～民權路中段
         [24.14005, 120.67915], // 2: 平等街×民族路口
-        [24.14040, 120.67950], // 3: 中山路～民族路中段（明道行商旅）
-        X.pingdeng,            // 4: 平等街×中山路口 [24.14078, 120.67989]
-        [24.14115, 120.68027], // 5: 中山路～台灣大道中段（平等街宣教小站／救護站）
-        [24.14152, 120.68064]  // 6: 台灣大道一段口南側內縮點（北端終點，不超出台灣大道）
+        [24.14040, 120.67950], // 3: 中山路～民族路中段
+        X.pingdeng,            // 4: 平等街×中山路口
+        [24.14115, 120.68027], // 5: 中山路～台灣大道中段
+        [24.14152, 120.68064]  // 6: 台灣大道一段口南側
       ];
-      var PD_N = [ PD[4], PD[5], PD[6] ];               // 中山路以北（至台灣大道）
-      var PD_S = [ PD[4], PD[3], PD[2], PD[1], PD[0] ]; // 中山路以南（經民族路至民權路）
+      var PD_N = [ PD[4], PD[5], PD[6] ];
+      var PD_S = [ PD[4], PD[3], PD[2], PD[1], PD[0] ];
 
       // 5. 市府路全線（民權路口內側 -> 民族路口 -> 中山路口 -> 台灣大道口內側）
-      var SF_MINQUAN = [24.13872, 120.67928]; // 民權路口北側（不超出民權路）
-      var SF_N_END   = [24.14086, 120.68145]; // 台灣大道口南側（不超出台灣大道）
+      var SF_MINQUAN = [24.13872, 120.67928];
+      var SF_N_END   = [24.14086, 120.68145];
       var SF         = [ SF_MINQUAN, X.minzuShifu, X.shifu, SF_N_END ];
-      var SF_NORTH   = [ X.shifu, SF_N_END ];        // 青山四月天・盛世百戲
-      var SF_SOUTH   = [ X.minzuShifu, SF_MINQUAN ]; // 日台媽媽手作市集 ＆ 三信手見你
+      var SF_NORTH   = [ X.shifu, SF_N_END ];        // 青山四月天・盛世百戲（中山路～台灣大道）
+      var SF_MID     = [ X.shifu, X.minzuShifu ];    // 舊市逗咖／飛爾市集（中山路～民族路，即黑圈路段）
+      var SF_SOUTH   = [ X.minzuShifu, SF_MINQUAN ]; // 日台媽媽手作市集 ＆ 三信手見你（民族路～民權路）
 
       // 6. 199巷（中山路 -> 台灣大道口內側【光織市集】）
       var LANE_199 = [ X.lane199, [24.14050, 120.68186] ];
@@ -287,14 +288,14 @@
       var LANE_141 = [ X.lane141, [24.13974, 120.68276] ];
 
       // 8. 繼光街全線（台灣大道口內側 -> 中山路口 -> 民族路口 -> 民權路口內側）
-      var JG_N_END   = [24.13934, 120.68316]; // 台灣大道口南側
-      var JG_MINZU   = [24.13793, 120.68156]; // 民族路口
-      var JG_MID_S   = [24.13760, 120.68118]; // 民族路～民權路中點
-      var JG_MINQUAN = [24.13728, 120.68082]; // 民權路口北側（不超出民權路）
+      var JG_N_END   = [24.13934, 120.68316];
+      var JG_MINZU   = [24.13793, 120.68156];
+      var JG_MID_S   = [24.13760, 120.68118];
+      var JG_MINQUAN = [24.13728, 120.68082];
       var JG_BEER_V  = [ JG_N_END, X.jiguang, [24.13830, 120.68198], [24.13805, 120.68170], JG_MINZU ];
       var JG_BEER_H  = [ X.ziyou, X.lane141, X.jiguang, X.dianzi, X.luchuanW ];
-      var JG_HEAL    = [ JG_MINZU, JG_MID_S ];   // 繼光・微妙之間療癒市集
-      var JG_MAGIC   = [ JG_MID_S, JG_MINQUAN ]; // 微妙魔法市集
+      var JG_HEAL    = [ JG_MINZU, JG_MID_S ];
+      var JG_MAGIC   = [ JG_MID_S, JG_MINQUAN ];
       var JG_ALL     = [ JG_N_END, X.jiguang, [24.13830, 120.68198], JG_MINZU, JG_MINQUAN ];
 
       // 9. 民族路橫向市集段（自由路 -> 繼光街【墨染古風雅集】；繼光街 -> 綠川西街【蓬萊留聲機原創市集】）
@@ -303,7 +304,7 @@
       var MORAN_PATH      = [ MINZU_ZIYOU, JG_MINZU ];
       var PHONO_PATH      = [ JG_MINZU, MINZU_LUCHUAN_W ];
 
-      // 10. 火車站前廣場（建國路以東：北側啤酒節 ＋ 南側三大市集）
+      // 10. 火車站前廣場
       var PLAZA_BEER = [ [24.13728, 120.68442], [24.13780, 120.68500] ];
       var PLAZA_MAIN = [ [24.13715, 120.68455], [24.13655, 120.68530] ];
 
@@ -311,7 +312,7 @@
       var A_PATH      = [ X.sanmin, X.pingdeng, X.shifu ];
       var SHINFU_PATH = [ X.xingzhong, X.sanmin ];
       var ALIEN_PATH  = [ X.liuchuanE, X.xingzhong, X.sanmin ];
-      var FEIER_PATH  = [ X.shifu, X.lane199, X.ziyou ];
+      var FEIER_PATH  = [ X.shifu, X.lane199, X.ziyou ]; // 中山路段（市府路～自由路）
 
       // 幾何內插輔助函數
       function linePt(a, b, t, side){
@@ -378,19 +379,17 @@
         { label:"廁所・火車站前流動廁所", type:"wc", icon:"廁", lat:24.13672, lng:120.68482, note:"建國路東側、火車站前廣場南側流動廁所。" },
         { label:"廁所・火車站站內公廁", type:"wc", icon:"廁", lat:24.13695, lng:120.68545, note:"台中火車站前廣場東側站體公廁。" }
       ];
-      var TYPE_TXT = { service:"服務處/設施", wc:"廁所", aid:"急救站", stage:"舞台", me:"我的位置", booth:"已確認攤位" };
+      var TYPE_TXT = { service:"服務處/設施", wc:"廁所", aid:"急救站", stage:"舞台", me:"我的位置", booth:"市集攤位" };
 
-      // ---------- 3. 依活動地圖顏色與路段生成全區攤位 ----------
+      // ---------- 3. 依活動地圖顏色與路段生成全區攤位（移除後方數字，僅保留市集名稱） ----------
       var booths = [];
-      function addLine(prefix, market, color, count, fn, namedMap){
+      function addLine(shortName, market, color, count, fn){
         for (var i=1; i<=count; i++){
           var p = fn(i, count);
-          var code = fn.code(i);
-          var nm = namedMap && namedMap[i];
           booths.push({
-            code: code,
-            label: nm ? (code+" "+nm) : code,
-            name: nm || null,
+            code: shortName,
+            label: shortName,
+            name: null,
             market: market,
             color: color,
             lat: p.lat,
@@ -399,124 +398,117 @@
         }
       }
 
-      // (1) 小蝸牛市集 - 鮮紅 #d93829（中山路西段 A1-A55、B1-B20 ＋ 仁愛街支線）
-      addLine("A", "小蝸牛市集", "#d93829", 55, Object.assign(function(i,n){
+      // (1) 小蝸牛市集 - 鮮紅 #d93829（中山路西段北側、南側 ＋ 仁愛街支線）
+      addLine("小蝸牛", "小蝸牛市集", "#d93829", 55, function(i,n){
         return linePt(X.liuchuan, X.zhonghua, 0.03 + 0.94*(i-1)/(n-1), 4.5);
-      }, {code:function(i){return "A"+i;}}), {46:"紙上旅行"});
-
-      addLine("B", "小蝸牛市集", "#d93829", 20, Object.assign(function(i,n){
+      });
+      addLine("小蝸牛", "小蝸牛市集", "#d93829", 20, function(i,n){
         return linePt(X.liuchuan, X.zhonghua, 0.04 + 0.92*(i-1)/(n-1), -4.5);
-      }, {code:function(i){return "B"+i;}}), {5:"屯青采森", 10:"茹蒔手作甜點", 20:"黔CIAN Jewelry"});
-
-      addLine("仁愛", "小蝸牛市集（仁愛街段）", "#d93829", 10, Object.assign(function(i,n){
+      });
+      addLine("小蝸牛", "小蝸牛市集（仁愛街段）", "#d93829", 10, function(i,n){
         return pathPt(RENAI_LINE, 0.06 + 0.88*(i-1)/(n-1), -3.8);
-      }, {code:function(i){return "小蝸牛仁愛"+i;}}), null);
+      });
 
-      // (2) 五權漫學堂 - 深紫 #7b2cbf（沿柳川東路三段北段河岸彎道繞行：中山路 -> 台灣大道）
-      addLine("漫學", "五權漫學堂", "#7b2cbf", 14, Object.assign(function(i,n){
+      // (2) 五權漫學堂 - 深紫 #7b2cbf（沿柳川東路三段北段河岸彎道繞行）
+      addLine("漫學堂", "五權漫學堂", "#7b2cbf", 14, function(i,n){
         return pathPt(LIUCHUAN_E_N, 0.05 + 0.90*(i-1)/(n-1), 3.5);
-      }, {code:function(i){return "漫學堂"+i;}}), null);
+      });
 
-      // (3) 斑馬市集 - 曜石黑 #2b2d42（中山路柳川橋面 -> 轉入柳川東路三段南段河岸彎道 -> 民族路）
-      addLine("斑馬", "斑馬市集", "#2b2d42", 16, Object.assign(function(i,n){
+      // (3) 斑馬市集 - 曜石黑 #2b2d42（中山路柳川橋面 -> 柳川東路三段南段河岸彎道）
+      addLine("斑馬", "斑馬市集", "#2b2d42", 16, function(i,n){
         return pathPt(ZEBRA_PATH, 0.04 + 0.92*(i-1)/(n-1), 3.2);
-      }, {code:function(i){return "斑馬"+i;}}), null);
+      });
 
       // (4) 鈴蘭城郊異邦市集 - 深藍灰 #3d5a80（中山路南側：柳川東路三段 -> 三民路二段）
-      addLine("異邦", "鈴蘭城郊異邦市集", "#3d5a80", 18, Object.assign(function(i,n){
+      addLine("異邦", "鈴蘭城郊異邦市集", "#3d5a80", 18, function(i,n){
         return pathPt(ALIEN_PATH, 0.05 + 0.90*(i-1)/(n-1), -4.5);
-      }, {code:function(i){return "異邦"+i;}}), null);
+      });
 
       // (5) 新富町市集 - 咖啡褐 #7f4f24（中山路北側：興中街 -> 三民路二段，第二市場前）
-      addLine("新富", "新富町市集", "#7f4f24", 12, Object.assign(function(i,n){
+      addLine("新富町", "新富町市集", "#7f4f24", 12, function(i,n){
         return pathPt(SHINFU_PATH, 0.06 + 0.88*(i-1)/(n-1), 4.5);
-      }, {code:function(i){return "新富町"+i;}}), null);
+      });
 
-      // (6) 藥香時光市集 - 森林綠 #2d8a4e（平等街全線嚴格介於台灣大道至民權路 ＋ 中山路A區）
-      addLine("A", "中山路A區・藥香時光", "#2d8a4e", 30, Object.assign(function(i,n){
+      // (6) 藥香時光市集 - 森林綠 #2d8a4e（平等街全線 ＋ 中山路A區）
+      addLine("藥香", "中山路A區・藥香時光", "#2d8a4e", 30, function(i,n){
         return pathPt(A_PATH, 0.03 + 0.94*(i-1)/(n-1), -4.5);
-      }, {code:function(i){return "A區"+i+"號";}}), {9:"虎元漢藥"});
-
-      addLine("C", "平等街C區・藥香時光", "#2d8a4e", 16, Object.assign(function(i,n){
+      });
+      addLine("藥香", "平等街C區・藥香時光", "#2d8a4e", 16, function(i,n){
         return pathPt(PD_N, 0.05 + 0.90*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "C"+(i<10?"0":"")+i;}}), {1:"良蔘訂作"});
-
-      addLine("B", "平等街B區・藥香時光", "#2d8a4e", 14, Object.assign(function(i,n){
+      });
+      addLine("藥香", "平等街B區・藥香時光", "#2d8a4e", 14, function(i,n){
         return pathPt(PD_N, 0.05 + 0.90*(i-1)/(n-1), -4.0);
-      }, {code:function(i){return "平等街B"+i;}}), null);
-
-      addLine("D", "平等街・藥香時光市集", "#2d8a4e", 20, Object.assign(function(i,n){
+      });
+      addLine("藥香", "平等街・藥香時光市集", "#2d8a4e", 20, function(i,n){
         return pathPt(PD_S, 0.04 + 0.92*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "藥香D"+(i<10?"0":"")+i;}}), null);
+      });
 
       // (7) 青山四月天・盛世百戲 - 天藍 #0096c7（市府路北段：中山路 -> 台灣大道）
-      addLine("百戲", "青山四月天・盛世百戲", "#0096c7", 15, Object.assign(function(i,n){
+      addLine("百戲", "青山四月天・盛世百戲", "#0096c7", 15, function(i,n){
         return pathPt(SF_NORTH, 0.06 + 0.88*(i-1)/(n-1), 4.2);
-      }, {code:function(i){return "百戲"+i;}}), null);
+      });
 
       // (8) 光織市集 - 鵝黃 #eab308（199巷：中山路 -> 台灣大道）
-      addLine("光織", "光織市集（199巷）", "#eab308", 12, Object.assign(function(i,n){
+      addLine("光織", "光織市集（199巷）", "#eab308", 12, function(i,n){
         return pathPt(LANE_199, 0.08 + 0.84*(i-1)/(n-1), -3.5);
-      }, {code:function(i){return "光織"+i;}}), null);
+      });
 
-      // (9) 舊市逗咖／飛爾市集 - 灰褐 #8d6e63（中山路南側：市府路 -> 自由路二段）
-      addLine("飛爾", "舊市逗咖／飛爾市集", "#8d6e63", 16, Object.assign(function(i,n){
+      // (9) 舊市逗咖／飛爾市集 - 灰褐 #8d6e63（中山路段：市府路->自由路 ＋ 市府路中段：中山路->民族路）
+      addLine("飛爾", "舊市逗咖／飛爾市集（中山路段）", "#8d6e63", 16, function(i,n){
         return pathPt(FEIER_PATH, 0.05 + 0.90*(i-1)/(n-1), -4.5);
-      }, {code:function(i){return "飛爾"+i;}}), null);
+      });
+      addLine("飛爾", "舊市逗咖／飛爾市集（市府路段）", "#8d6e63", 14, function(i,n){
+        return pathPt(SF_MID, 0.06 + 0.88*(i-1)/(n-1), 4.2);
+      });
 
       // (10) 日台媽媽手作市集 ＆ 三信手見你 - 暖橘 #f48c06（市府路南段：民族路 -> 民權路）
-      addLine("日台", "日台媽媽手作市集", "#f48c06", 12, Object.assign(function(i,n){
+      addLine("日台媽媽", "日台媽媽手作市集", "#f48c06", 12, function(i,n){
         return pathPt(SF_SOUTH, 0.06 + 0.88*(i-1)/(n-1), -4.2);
-      }, {code:function(i){return "日台媽媽"+i;}}), null);
-
-      addLine("三信", "三信手見你", "#d97706", 12, Object.assign(function(i,n){
+      });
+      addLine("三信", "三信手見你", "#d97706", 12, function(i,n){
         return pathPt(SF_SOUTH, 0.06 + 0.88*(i-1)/(n-1), 4.2);
-      }, {code:function(i){return "三信"+i;}}), null);
+      });
 
       // (11) 火花造物市集 - 櫻桃粉 #e63976（141巷：中山路 -> 台灣大道）
-      addLine("火花", "火花造物市集（141巷）", "#e63976", 12, Object.assign(function(i,n){
+      addLine("火花", "火花造物市集（141巷）", "#e63976", 12, function(i,n){
         return pathPt(LANE_141, 0.08 + 0.84*(i-1)/(n-1), -3.5);
-      }, {code:function(i){return "火花"+i;}}), null);
+      });
 
       // (12) 大墩鈴蘭通啤酒節 - 亮金黃 #f59e0b（繼光街縱向段 ＋ 中山路橫向段）
-      addLine("啤酒V", "大墩鈴蘭通啤酒節（繼光街段）", "#f59e0b", 20, Object.assign(function(i,n){
+      addLine("啤酒節", "大墩鈴蘭通啤酒節（繼光街段）", "#f59e0b", 20, function(i,n){
         return pathPt(JG_BEER_V, 0.04 + 0.92*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "啤酒繼光"+i;}}), null);
-
-      addLine("啤酒H", "大墩鈴蘭通啤酒節（中山路段）", "#f59e0b", 18, Object.assign(function(i,n){
+      });
+      addLine("啤酒節", "大墩鈴蘭通啤酒節（中山路段）", "#f59e0b", 18, function(i,n){
         return pathPt(JG_BEER_H, 0.04 + 0.92*(i-1)/(n-1), 4.2);
-      }, {code:function(i){return "啤酒中山"+i;}}), null);
+      });
 
       // (13) 墨染古風雅集 - 青湖綠 #0d9488（民族路：自由路二段 -> 繼光街）
-      addLine("墨染", "墨染古風雅集", "#0d9488", 12, Object.assign(function(i,n){
+      addLine("墨染", "墨染古風雅集", "#0d9488", 12, function(i,n){
         return pathPt(MORAN_PATH, 0.08 + 0.84*(i-1)/(n-1), 3.8);
-      }, {code:function(i){return "墨染"+i;}}), null);
+      });
 
       // (14) 蓬萊留聲機原創市集 - 深藏青 #1e3a8a（民族路：繼光街 -> 綠川西街）
-      addLine("留聲機", "蓬萊留聲機原創市集", "#1e3a8a", 12, Object.assign(function(i,n){
+      addLine("留聲機", "蓬萊留聲機原創市集", "#1e3a8a", 12, function(i,n){
         return pathPt(PHONO_PATH, 0.08 + 0.84*(i-1)/(n-1), -3.8);
-      }, {code:function(i){return "留聲機"+i;}}), null);
+      });
 
       // (15) 繼光・微妙之間療癒市集 - 金黃 #ca8a04（繼光街南段北半：民族路 -> 中點）
-      addLine("療癒", "繼光・微妙之間療癒市集", "#ca8a04", 10, Object.assign(function(i,n){
+      addLine("微妙療癒", "繼光・微妙之間療癒市集", "#ca8a04", 10, function(i,n){
         return pathPt(JG_HEAL, 0.08 + 0.84*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "微妙療癒"+i;}}), null);
+      });
 
       // (16) 微妙魔法市集 - 磚紅 #b91c1c（繼光街南段南半：中點 -> 民權路）
-      addLine("魔法", "微妙魔法市集", "#b91c1c", 10, Object.assign(function(i,n){
+      addLine("微妙魔法", "微妙魔法市集", "#b91c1c", 10, function(i,n){
         return pathPt(JG_MAGIC, 0.08 + 0.84*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "微妙魔法"+i;}}), null);
+      });
 
       // (17) 火車站前廣場市集群 - 亮澄橘 #ea580c
-      addLine("站前啤", "大墩鈴蘭通啤酒節（站前區）", "#f59e0b", 8, Object.assign(function(i,n){
+      addLine("啤酒節", "大墩鈴蘭通啤酒節（站前區）", "#f59e0b", 8, function(i,n){
         return pathPt(PLAZA_BEER, 0.08 + 0.84*(i-1)/(n-1), 4.0);
-      }, {code:function(i){return "站前啤酒"+i;}}), null);
-
-      addLine("站前", "火車站前廣場（日本物產／泰好好／小旅）", "#ea580c", 20, Object.assign(function(i,n){
+      });
+      addLine("站前市集", "火車站前廣場（日本物產／泰好好／小旅）", "#ea580c", 20, function(i,n){
         return pathPt(PLAZA_MAIN, 0.05 + 0.90*(i-1)/(n-1), (i%2===0 ? 5.0 : -5.0));
-      }, {code:function(i){return "站前廣場"+i;}}), null);
-
-      var NAMED = booths.filter(function(b){ return !!b.name; });
+      });
 
       // ---------- 4. 圖層 GeoJSON（依活動地圖各市集專屬顏色渲染） ----------
       function boothGeoJSON(){
@@ -526,7 +518,7 @@
             return {
               type: "Feature",
               geometry: { type:"Point", coordinates:[b.lng, b.lat] },
-              properties: { label:b.label, code:b.code, name:b.name||"", market:b.market, color:b.color }
+              properties: { label:b.label, code:b.code, name:"", market:b.market, color:b.color }
             };
           })
         };
@@ -588,6 +580,7 @@
             { type:"Feature", properties:{zname:"青山四月天・盛世百戲", color:"#0096c7"}, geometry:{type:"Polygon", coordinates:[strip(SF_NORTH, 12)]} },
             { type:"Feature", properties:{zname:"光織市集(199巷)", color:"#eab308"}, geometry:{type:"Polygon", coordinates:[strip(LANE_199, 10)]} },
             { type:"Feature", properties:{zname:"舊市逗咖／飛爾市集", color:"#8d6e63"}, geometry:{type:"Polygon", coordinates:[strip(FEIER_PATH, 13)]} },
+            { type:"Feature", properties:{zname:"舊市逗咖／飛爾市集(市府路)", color:"#8d6e63"}, geometry:{type:"Polygon", coordinates:[strip(SF_MID, 13)]} },
             { type:"Feature", properties:{zname:"日台媽媽／三信手見你", color:"#f48c06"}, geometry:{type:"Polygon", coordinates:[strip(SF_SOUTH, 13)]} },
             { type:"Feature", properties:{zname:"火花造物市集(141巷)", color:"#e63976"}, geometry:{type:"Polygon", coordinates:[strip(LANE_141, 10)]} },
             { type:"Feature", properties:{zname:"大墩鈴蘭通啤酒節", color:"#f59e0b"}, geometry:{type:"Polygon", coordinates:[strip(JG_BEER_V, 13)]} },
@@ -618,15 +611,15 @@
           { id:"booths", data: boothGeoJSON(), layers:[
             { id:"booths-dot", type:"circle", source:"booths", minzoom:15.0,
               paint:{
-                "circle-radius": ["case", ["!=",["get","name"],""], 6.8, 4.6],
+                "circle-radius": 4.8,
                 "circle-color": ["get", "color"],
                 "circle-stroke-color": "#ffffff",
                 "circle-stroke-width": 1.5,
                 "circle-opacity": 0.95
               }
             },
-            { id:"booths-label", type:"symbol", source:"booths", minzoom:16.8,
-              layout:{ "text-field":["get","label"], "text-size":11.5, "text-offset":[0,1.15], "text-anchor":"top", "text-allow-overlap":false, "text-optional":true },
+            { id:"booths-label", type:"symbol", source:"booths", minzoom:16.5,
+              layout:{ "text-field":["get","label"], "text-size":11.5, "text-offset":[0.6, 0], "text-anchor":"left", "text-allow-overlap":false, "text-optional":true },
               paint:{ "text-color":"#22302e", "text-halo-color":"#ffffff", "text-halo-width":1.8 } }
           ]}
         ];
@@ -675,7 +668,7 @@
         handle = MapHelpers.mountMap(mapEl, {
           places: places, center: center, zoom: zoom, baseStyle: "light",
           marker: markerHTML,
-          tooltip: function(f){ var p=f.properties||{}; return p.label ? (p.market ? (p.label+"（"+p.market+"）") : p.label) : (p.zname||""); },
+          tooltip: function(f){ var p=f.properties||{}; return p.market ? p.market : (p.zname||p.label||""); },
           overlays: buildOverlays(extraOverlays),
           onSelectPlace: function(idx){ showDetail(idx===null?null:currentPlaces[idx]); }
         }, showFallback);
@@ -683,12 +676,12 @@
       }
 
       function showFallback(){
-        mapEl.innerHTML = '<div class="map-fallback"><div style="background:#8f1d0e;color:#fff;font-weight:900;font-size:18px;line-height:1.4;text-align:center;padding:12px 16px;margin:0 0 12px;border:3px solid #5c1208;border-radius:8px;">這是旅人自製的非官方動態地圖</div><h3>地圖暫時無法載入</h3><p>你的裝置或網路目前不支援互動地圖。下面的分區、服務處與廁所清單仍然完整可用。</p></div>';
+        mapEl.innerHTML = '<div class="map-fallback"><h3>地圖暫時無法載入</h3><p>你的裝置或網路目前不支援互動地圖。下面的分區、服務處與廁所清單仍然完整可用。</p></div>';
       }
 
       var DEFAULT_CENTER = { lat:24.14060, lng:120.68030 };
-      var NOTE_ALL = "<b>總覽模式：</b>地圖已依官方活動地圖顏色標示 18 個主題市集路段、舞台、服務台、救護站、拍貼機、垃圾桶與廁所。放大到路段後會顯示各區彩色攤位點與編號。";
-      var NOTE_ZOOM = "<b>已放大：攤位名稱與分區顏色顯示中。</b>各色圓點對應活動地圖上的市集顏色；有店名的為已確認攤位。拖動地圖可看其他路段。";
+      var NOTE_ALL = "<b>總覽模式：</b>地圖已依官方活動地圖顏色標示 18 個主題市集路段、舞台、服務台、救護站、拍貼機、垃圾桶與廁所。放大到路段後會顯示各區彩色攤位點與市集名稱。";
+      var NOTE_ZOOM = "<b>已放大：市集攤位與分區顏色顯示中。</b>各色圓點對應活動地圖上的市集名稱（如「● 飛爾」、「● 小蝸牛」）。拖動地圖可看其他路段。";
 
       mount(DEFAULT_CENTER, 15.6, FACILITIES, null, NOTE_ALL);
 
@@ -712,7 +705,7 @@
           var me = { label:"你現在的位置", type:"me", icon:"我", lat:lat, lng:lng, note:"定位誤差約 "+acc+" 公尺。若藍點和你實際站的位置差很多，先確認手機定位已開啟。" };
           var places = [me].concat(FACILITIES);
           mount({lat:lat, lng:lng}, 17.6, places, [accuracyOverlay(lat,lng, Math.max(acc,40))],
-            "<b>已定位到你的位置</b>（藍色圓點，誤差約 "+acc+" 公尺）。附近攤位的編號和店名會直接顯示在地圖上。");
+            "<b>已定位到你的位置</b>（藍色圓點，誤差約 "+acc+" 公尺）。附近路段的市集名稱會直接顯示在地圖上。");
           showDetail(me);
         }, function(err){
           var msg = err.code===1 ? "你按了拒絕定位，或瀏覽器擋下了定位。" : (err.code===3 ? "定位逾時，訊號可能不穩。" : "目前抓不到位置訊號。");
@@ -722,12 +715,12 @@
 
       // ---------- 7. 各分區快速跳轉卡片 ----------
       var ZONES = [
-        { name:"小蝸牛市集（含仁愛街段）", range:"紅線區｜中山路西段＋仁愛街", desc:"中華路一段至柳川西路三段，並延伸入仁愛街（至民族路）。已確認：紙上旅行A46、屯青采森B5、茹蒔手作甜點B10、黔CIAN Jewelry B20。", center:{lat:24.14365, lng:120.67655}, zoom:17.7 },
+        { name:"小蝸牛市集（含仁愛街段）", range:"紅線區｜中山路西段＋仁愛街", desc:"中華路一段至柳川西路三段，並延伸入仁愛街（至民族路）。", center:{lat:24.14365, lng:120.67655}, zoom:17.7 },
         { name:"五權漫學堂 ＆ 斑馬市集", range:"紫線／黑白線｜沿柳川東路河岸繞行", desc:"沿河岸道路彎道分布：北段（中山路至台灣大道）為五權漫學堂；跨橋面與南段（中山路至民族路）為斑馬市集，旁設主舞台。", center:{lat:24.14291, lng:120.67742}, zoom:17.7 },
         { name:"新富町市集 ＆ 鈴蘭城郊異邦市集", range:"褐線／藍灰線｜第二市場段中山路", desc:"興中街至三民路二段北側（第二市場前）為新富町市集；柳川東路至三民路二段南側為鈴蘭城郊異邦市集。", center:{lat:24.14220, lng:120.67825}, zoom:17.7 },
-        { name:"藥香時光市集（平等街＋中山路A區）", range:"綠線區｜平等街（台灣大道～民權路）", desc:"平等街全線嚴格介於台灣大道與民權路之間，含中山路A區。已確認：良蔘訂作C01、虎元漢藥A區9號。", center:{lat:24.14045, lng:120.67955}, zoom:17.5 },
+        { name:"藥香時光市集（平等街＋中山路A區）", range:"綠線區｜平等街（台灣大道～民權路）", desc:"平等街全線介於台灣大道與民權路之間，含中山路A區（三民路至市府路）。", center:{lat:24.14045, lng:120.67955}, zoom:17.5 },
         { name:"青山四月天・盛世百戲 ＆ 光織市集", range:"天藍線／黃線｜市府路北段＋199巷", desc:"市府路北段（中山路至台灣大道）為青山四月天・盛世百戲；旁側 199 巷為光織市集。", center:{lat:24.14035, lng:120.68125}, zoom:17.7 },
-        { name:"舊市逗咖／飛爾市集 ＆ 鈴蘭133", range:"灰褐線｜中山路（市府路～自由路）", desc:"中山路中段（市府路至自由路二段），旁設鈴蘭133（拍貼機、廁所）、服務台與救護站。", center:{lat:24.13985, lng:120.68095}, zoom:17.7 },
+        { name:"舊市逗咖／飛爾市集 ＆ 鈴蘭133", range:"灰褐線｜中山路＋市府路（中山～民族）", desc:"涵蓋中山路（市府路至自由路二段）及轉角市府路中段（中山路至民族路），旁設鈴蘭133、服務台與救護站。", center:{lat:24.13980, lng:120.68055}, zoom:17.7 },
         { name:"日台媽媽手作市集 ＆ 三信手見你", range:"橘線區｜市府路南段（民族路～民權路）", desc:"市府路南段（民族路至民權路、三信商業銀行前），台日手作料理、烘焙與文創。", center:{lat:24.13905, lng:120.67960}, zoom:17.7 },
         { name:"火花造物市集（141巷）", range:"粉紅線｜中山路141巷", desc:"自由路二段與繼光街之間的 141 巷（中山路至台灣大道）。", center:{lat:24.13940, lng:120.68240}, zoom:17.8 },
         { name:"大墩鈴蘭通啤酒節（繼光×中山十字區）", range:"亮黃線｜繼光街×中山路十字街區", desc:"繼光街（台灣大道至民族路）與中山路（自由路至綠川西街）十字封街區，10/25延長至22:00。", center:{lat:24.13868, lng:120.68241}, zoom:17.6 },
@@ -745,13 +738,13 @@
         b.querySelector(".range").textContent = z.range;
         b.querySelector("p").textContent = z.desc;
         b.addEventListener("click", function(){
-          mount(z.center, z.zoom, FACILITIES, null, "<b>"+z.name+"：</b>已放大到此區，攤位編號與市集專屬顏色已顯示。");
+          mount(z.center, z.zoom, FACILITIES, null, "<b>"+z.name+"：</b>已放大到此區，市集名稱與專屬顏色已顯示。");
           mapEl.scrollIntoView({behavior:"smooth", block:"start"});
         });
         zonesEl.appendChild(b);
       });
 
-      // ---------- 8. 設施與已確認攤位清單 ----------
+      // ---------- 8. 設施清單 ----------
       var facList = document.getElementById("facList");
       facList.innerHTML = "";
       FACILITIES.forEach(function(f, i){
@@ -766,20 +759,6 @@
           mapEl.scrollIntoView({behavior:"smooth", block:"start"});
         });
         facList.appendChild(li);
-      });
-
-      var namedList = document.getElementById("namedList");
-      namedList.innerHTML = "";
-      NAMED.forEach(function(b){
-        var li = document.createElement("li");
-        li.innerHTML = "<span class='tag booth'>"+b.code+"</span><b></b><small></small>";
-        li.querySelector("b").textContent = b.name;
-        li.querySelector("small").textContent = b.market + "・編號 " + b.code + "（位置為沿街排列示意）";
-        li.addEventListener("click", function(){
-          mount({lat:b.lat, lng:b.lng}, 18.2, FACILITIES, null, "<b>"+b.code+" "+b.name+"：</b>已放大到 "+b.market+" 的 "+b.code+" 位置（示意），現場請對攤位編號牌確認。");
-          mapEl.scrollIntoView({behavior:"smooth", block:"start"});
-        });
-        namedList.appendChild(li);
       });
     })();
     </script>
