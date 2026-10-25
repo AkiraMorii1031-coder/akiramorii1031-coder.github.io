@@ -102,6 +102,7 @@
       <header class="top">
         <div class="lanterns" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         <h1>鈴蘭通散步納涼祭・動態地圖</h1>
+        <div style="background:#8f1d0e;color:#fff;font-weight:900;font-size:18px;line-height:1.4;text-align:center;padding:12px 16px;margin:12px 0 0;border:3px solid #5c1208;border-radius:8px;">這是旅人自製的非官方動態地圖</div>
         <p class="sub">台中舊城區封街市集全區地圖：中山路、繼光街、平等街、市府路。先看總覽找分區，放大到路段就會看到攤位編號和已確認的攤位名稱。</p>
         <div class="badges">
           <span class="badge hot">第8屆・百變鈴蘭</span>
@@ -682,7 +683,7 @@
       }
 
       function showFallback(){
-        mapEl.innerHTML = '<div class="map-fallback"><h3>地圖暫時無法載入</h3><p>你的裝置或網路目前不支援互動地圖。下面的分區、服務處與廁所清單仍然完整可用。</p></div>';
+        mapEl.innerHTML = '<div class="map-fallback"><div style="background:#8f1d0e;color:#fff;font-weight:900;font-size:18px;line-height:1.4;text-align:center;padding:12px 16px;margin:0 0 12px;border:3px solid #5c1208;border-radius:8px;">這是旅人自製的非官方動態地圖</div><h3>地圖暫時無法載入</h3><p>你的裝置或網路目前不支援互動地圖。下面的分區、服務處與廁所清單仍然完整可用。</p></div>';
       }
 
       var DEFAULT_CENTER = { lat:24.14060, lng:120.68030 };
